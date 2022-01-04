@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="balance-sheet" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmCompanyName" class="java.lang.String"/>
+	<parameter name="prmFirstDateBalanceSheetCOA" class="java.lang.String"/>
+	<parameter name="prmLastDateBalanceSheetCOA" class="java.lang.String"/>
+	<parameter name="prmFirstDate" class="java.lang.String"/>
+	<parameter name="prmLastDate" class="java.lang.String"/>
+	<parameter name="prmAccountType" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+	TransactionDate,
+	TransactionDateMonth,
+	IstilahAcc,
+	IstilahAcc2,
+	AccountCode,
+	AccountName,
+	LastBalance,
+	Balance
+FROM _temp_balance_sheet]]>
+	</queryString>
+	<field name="TransactionDate" class="java.lang.String"/>
+	<field name="TransactionDateMonth" class="java.lang.Integer"/>
+	<field name="IstilahAcc" class="java.lang.String"/>
+	<field name="IstilahAcc2" class="java.lang.String"/>
+	<field name="AccountCode" class="java.lang.String"/>
+	<field name="AccountName" class="java.lang.String"/>
+	<field name="LastBalance" class="java.math.BigDecimal"/>
+	<field name="Balance" class="java.math.BigDecimal"/>
+	<variable name="SUM_ACC2_LAST_BALANCE" class="java.math.BigDecimal" resetType="Group" resetGroup="IstilahAcc2" calculation="Sum">
+		<variableExpression><![CDATA[$F{LastBalance}]]></variableExpression>
+	</variable>
+	<variable name="SUM_ACC2_BALANCE" class="java.math.BigDecimal" resetType="Group" resetGroup="IstilahAcc2" calculation="Sum">
+		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
+	</variable>
+	<variable name="SUM_ACC_LAST_BALANCE" class="java.math.BigDecimal" resetType="Group" resetGroup="IstilahAcc" calculation="Sum">
+		<variableExpression><![CDATA[$F{LastBalance}]]></variableExpression>
+	</variable>
+	<variable name="SUM_ACC_BALANCE" class="java.math.BigDecimal" resetType="Group" resetGroup="IstilahAcc" calculation="Sum">
+		<variableExpression><![CDATA[$F{Balance}]]></variableExpression>
+	</variable>
+	<group name="TransactionDate" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{TransactionDate}]]></groupExpression>
+	</group>
+	<group name="IstilahAcc">
+		<groupExpression><![CDATA[$F{IstilahAcc}]]></groupExpression>
+		<groupHeader>
+			<band height="17">
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement x="0" y="0" width="554" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="12" isBold="true" isUnderline="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IstilahAcc}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="19">
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement x="0" y="2" width="330" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="10" isBold="true" isUnderline="false"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total " + $F{IstilahAcc}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00">
+					<reportElement x="442" y="2" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="10" isBold="true" isUnderline="true"/>
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_ACC_BALANCE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00">
+					<reportElement x="330" y="2" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="10" isBold="true" isUnderline="true"/>
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_ACC_LAST_BALANCE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="IstilahAcc2">
+		<groupExpression><![CDATA[$F{IstilahAcc2}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement x="32" y="0" width="522" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="10" isBold="true" isUnderline="false"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IstilahAcc2}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<textField isStretchWithOverflow="true" pattern="">
+					<reportElement x="33" y="4" width="297" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true" isUnderline="false"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total " + $F{IstilahAcc2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00">
+					<reportElement x="330" y="4" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true" isUnderline="true"/>
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_ACC2_LAST_BALANCE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00">
+					<reportElement x="442" y="4" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true" isUnderline="true"/>
+						<paragraph rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_ACC2_BALANCE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="94" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="307" height="29"/>
+				<textElement>
+					<font fontName="Tahoma" size="14" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmCompanyName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="29" width="156" height="25"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true" isUnderline="false"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<text><![CDATA[BALANCE SHEET]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="0" y="54" width="281" height="20"/>
+				<box>
+					<pen lineWidth="1.25"/>
+					<topPen lineWidth="1.25"/>
+					<leftPen lineWidth="1.25"/>
+					<bottomPen lineWidth="1.25"/>
+					<rightPen lineWidth="1.25"/>
+				</box>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="4" y="3" width="272" height="15"/>
+					<textElement>
+						<font fontName="Tahoma" size="12" isBold="true"/>
+						<paragraph leftIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Periode : " + $F{TransactionDate}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<staticText>
+				<reportElement x="470" y="14" width="19" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="14" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="0" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="489" y="14" width="20" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="452" y="0" width="103" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="14" width="18" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="330" y="79" width="112" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="true"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<text><![CDATA[Last Month]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="442" y="79" width="112" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="true"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<text><![CDATA[This Month]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="37" y="0" width="90" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AccountCode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="127" y="0" width="203" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AccountName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="330" y="0" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LastBalance}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="442" y="0" width="112" height="15" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Balance}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

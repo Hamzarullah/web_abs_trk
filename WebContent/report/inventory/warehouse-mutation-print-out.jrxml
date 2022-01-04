@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="warehouse_mutation_print_out" pageWidth="612" pageHeight="396" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="118"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmCompanyName" class="java.lang.String"/>
+	<parameter name="prmCode" class="java.lang.String"/>
+	<parameter name="image" class="java.io.InputStream"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT  qry.code,
+        qry.branchName AS branchName,
+        qry.companyName AS companyName,
+        qry.transactiondate AS transactionDate,
+        qry.destinationWarehouseCode AS destinationWarehouseCode,
+        qry.destinationWarehouseName AS destinationWarehouseName,
+        qry.sourceWarehouseCode AS sourceWarehouseCode,
+        qry.sourceWarehouseName AS sourceWarehouseName,
+        qry.refno,
+        qry.remark,
+        qry.remarkdetail AS remarkdetail,
+        qry.itemCode AS itemCode,
+        qry.itemname AS itemName,
+        qry.quantity AS quantity,
+        qry.uomname AS uomName,
+        qry.SerialNo AS serialNo,
+        qry.PicCode AS PicCode,
+        qry.PicName AS PicName,
+        qry.SerialNoStatus AS serialNoStatus
+
+FROM
+
+(SELECT ivt_warehouse_mutation.code,
+        mst_branch.name AS branchName,
+        mst_company.name AS companyName,
+        ivt_warehouse_mutation.transactiondate,
+        ivt_warehouse_mutation.DestinationWarehouseCode AS destinationWarehouseCode,
+        destination_warehouse.`Name` AS destinationWarehouseName,
+        ivt_warehouse_mutation.SourceWarehouseCode AS sourceWarehouseCode,
+        source_warehouse.`Name` AS sourceWarehouseName,
+        ivt_warehouse_mutation.refno,
+        ivt_warehouse_mutation.remark,
+        ivt_warehouse_mutation_item_detail.remark AS remarkdetail,
+        ivt_warehouse_mutation_item_detail.ItemCode AS itemcode,
+        mst_item.name AS itemname,
+        ivt_warehouse_mutation_item_detail.`Quantity` AS quantity,
+        mst_unit_of_measure.name AS uomname,
+        mst_item.`SerialNoStatus`,
+        ivt_warehouse_mutation.`PICEmployeeCode` AS PicCode,
+        mst_employee.`Name` AS PicName,
+        '' AS SerialNo
+        FROM ivt_warehouse_mutation
+        INNER JOIN
+            ivt_warehouse_mutation_item_detail
+            ON ivt_warehouse_mutation_item_detail.headercode = ivt_warehouse_mutation.code
+        INNER JOIN
+            mst_item
+            ON mst_item.code = ivt_warehouse_mutation_item_detail.itemcode
+        INNER JOIN
+            mst_unit_of_measure ON mst_unit_of_measure.code = mst_item.`UnitOfMeasureCode`
+	INNER JOIN
+	    mst_branch ON mst_branch.`Code` = ivt_warehouse_mutation.`BranchCode`
+	INNER JOIN
+	    mst_company ON mst_company.`Code` = ivt_warehouse_mutation.`CompanyCode`
+        INNER JOIN
+            mst_warehouse destination_warehouse ON destination_warehouse.`Code` = ivt_warehouse_mutation.`DestinationWarehouseCode`
+        INNER JOIN
+            mst_warehouse source_warehouse ON source_warehouse.`Code` = ivt_warehouse_mutation.`SourceWarehouseCode`
+	LEFT JOIN
+	    mst_employee ON mst_employee.`Code` = ivt_warehouse_mutation.`PICEmployeeCode`
+	WHERE mst_item.`SerialNoStatus` = FALSE
+
+UNION ALL
+
+SELECT ivt_warehouse_mutation.code,
+        mst_branch.name AS branchName,
+        mst_company.name AS companyName,
+        ivt_warehouse_mutation.transactiondate,
+        ivt_warehouse_mutation.DestinationWarehouseCode AS destinationWarehouseCode,
+        destination_warehouse.`Name` AS destinationWarehouseName,
+        ivt_warehouse_mutation.SourceWarehouseCode AS sourceWarehouseCode,
+        source_warehouse.`Name` AS sourceWarehouseName,
+        ivt_warehouse_mutation.refno,
+        ivt_warehouse_mutation.remark,
+        ivt_warehouse_mutation_item_detail.remark AS remarkdetail,
+        ivt_warehouse_mutation_item_detail.ItemCode AS itemcode,
+        mst_item.name AS itemname,
+        1 AS quantity,
+        mst_unit_of_measure.name AS uomname,
+        mst_item.`SerialNoStatus`,
+        ivt_warehouse_mutation.`PICEmployeeCode` AS PicCode,
+        mst_employee.`Name` AS PicName,
+        IFNULL(ivt_warehouse_mutation_serial_no_detail.`SerialNo`,'') AS SerialNo
+        FROM ivt_warehouse_mutation
+        INNER JOIN
+            ivt_warehouse_mutation_item_detail
+            ON ivt_warehouse_mutation_item_detail.headercode = ivt_warehouse_mutation.code
+        INNER JOIN
+            mst_item
+            ON mst_item.code = ivt_warehouse_mutation_item_detail.itemcode
+        INNER JOIN
+            mst_unit_of_measure ON mst_unit_of_measure.code = mst_item.`UnitOfMeasureCode`
+        INNER JOIN
+	    ivt_warehouse_mutation_serial_no_detail ON ivt_warehouse_mutation_serial_no_detail.`HeaderCode` = ivt_warehouse_mutation_item_detail.`Code`
+        INNER JOIN
+            mst_branch ON mst_branch.code = ivt_warehouse_mutation.branchcode
+        INNER JOIN
+            mst_company ON mst_company.code = ivt_warehouse_mutation.companycode
+        INNER JOIN
+            mst_warehouse destination_warehouse ON destination_warehouse.`Code` = ivt_warehouse_mutation.`DestinationWarehouseCode`
+        INNER JOIN
+            mst_warehouse source_warehouse ON source_warehouse.`Code` = ivt_warehouse_mutation.`SourceWarehouseCode`
+	LEFT JOIN
+	    mst_employee ON mst_employee.`Code` = ivt_warehouse_mutation.`PICEmployeeCode`
+         ) AS qry
+        WHERE
+            qry.code= $P{prmCode}]]>
+	</queryString>
+	<field name="code" class="java.lang.String"/>
+	<field name="branchName" class="java.lang.String"/>
+	<field name="companyName" class="java.lang.String"/>
+	<field name="transactionDate" class="java.util.Date"/>
+	<field name="destinationWarehouseCode" class="java.lang.String"/>
+	<field name="sourceWarehouseCode" class="java.lang.String"/>
+	<field name="destinationWarehouseName" class="java.lang.String"/>
+	<field name="sourceWarehouseName" class="java.lang.String"/>
+	<field name="refno" class="java.lang.String"/>
+	<field name="remark" class="java.lang.String"/>
+	<field name="remarkdetail" class="java.lang.String"/>
+	<field name="quantity" class="java.math.BigDecimal"/>
+	<field name="itemCode" class="java.lang.String"/>
+	<field name="itemName" class="java.lang.String"/>
+	<field name="uomName" class="java.lang.String"/>
+	<field name="serialNo" class="java.lang.String"/>
+	<field name="PicCode" class="java.lang.String"/>
+	<field name="PicName" class="java.lang.String"/>
+	<field name="serialNoStatus" class="java.lang.Boolean"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="127" splitType="Stretch">
+			<printWhenExpression><![CDATA[(($V{PAGE_NUMBER} == 1) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="145" y="54" width="13" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="68" width="13" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField pattern="dd MMMMM yyyy">
+				<reportElement x="162" y="67" width="194" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transactionDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="414" y="54" width="13" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="428" y="40" width="141" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{companyName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="13" y="80" width="132" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[SOURCE WAREHOUSE]]></text>
+			</staticText>
+			<line>
+				<reportElement x="207" y="36" width="160" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="145" y="80" width="13" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="66" width="132" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="16" width="201" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="14" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Warehouse Mutation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="54" width="132" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[WHM NO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="429" y="69" width="140" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{refno}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="162" y="102" width="194" height="24"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{destinationWarehouseCode}+"-"+$F{destinationWarehouseName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="162" y="40" width="194" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{branchName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="429" y="81" width="140" height="45"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="361" y="54" width="52" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[PIC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="68" width="52" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[REF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="80" width="13" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="145" y="66" width="13" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="162" y="54" width="194" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="145" y="102" width="13" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="162" y="80" width="194" height="27"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sourceWarehouseCode}+"-"+$F{sourceWarehouseName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="361" y="80" width="52" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[REMARK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="102" width="132" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[DESTINATION WAREHOUSE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="1" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="527" y="1" width="19" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="509" y="1" width="18" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="546" y="1" width="20" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="132" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="12" isBold="true"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[MAXINDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="40" width="132" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[BRANCH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="40" width="13" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="40" width="52" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[COMPANY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="415" y="40" width="13" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="428" y="55" width="141" height="13"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PicName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<printWhenExpression><![CDATA[(($V{PAGE_NUMBER} == 1) ? Boolean.FALSE : Boolean.TRUE)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="189" y="16" width="201" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="14" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Warehouse Mutation]]></text>
+			</staticText>
+			<line>
+				<reportElement x="207" y="35" width="160" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="509" y="0" width="18" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="527" y="0" width="19" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="546" y="0" width="20" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="465" y="0" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="132" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="12" isBold="true"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[MAXINDO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="28" y="4" width="62" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[ITEM CODE]]></text>
+			</staticText>
+			<line>
+				<reportElement x="6" y="2" width="560" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="6" y="17" width="560" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="398" y="4" width="33" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QTY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="426" y="5" width="140" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REMARK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="88" y="4" width="204" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[ITEM NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="4" width="95" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[SERIAL NO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="4" width="22" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8" isBold="true" isPdfEmbedded="false"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="398" y="0" width="33" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="0" width="95" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{serialNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="28" y="0" width="62" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{itemCode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="88" y="0" width="204" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{itemName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="426" y="0" width="140" height="11"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remarkdetail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="0" width="22" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="3" y="11" width="560" height="1" isPrintWhenDetailOverflows="true"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch">
+			<line>
+				<reportElement x="3" y="0" width="563" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="72">
+			<staticText>
+				<reportElement x="229" y="0" width="145" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[SPV]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="431" y="0" width="145" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[PIC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="0" width="145" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[Gudang]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<line>
+				<reportElement x="57" y="67" width="100" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="151" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<line>
+				<reportElement x="252" y="67" width="100" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="346" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="437" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<line>
+				<reportElement x="452" y="67" width="100" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="546" y="55" width="18" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph firstLineIndent="3"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

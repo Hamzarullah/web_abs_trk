@@ -1,0 +1,73 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.inkombizz.finance.action;
+
+import com.inkombizz.action.BaseSession;
+import com.inkombizz.dao.HBMSession;
+import com.inkombizz.common.enumeration.EnumAuthorizationString;
+import static com.opensymphony.xwork2.Action.SUCCESS;
+import com.opensymphony.xwork2.ActionSupport;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.Results;
+
+import com.inkombizz.finance.bll.VendorDownPaymentBLL;
+import com.inkombizz.utils.DateUtils;
+import java.util.Date;
+
+@Results({
+    @Result(name="success", location="finance/vendor-down-payment.jsp"),
+    @Result(name="redirect", type="redirect", location="../pages/noauthority.jsp")
+})
+public class VendorDownPaymentAction extends ActionSupport{
+    
+    private static final long serialVersionUID = 1L;
+    
+    protected HBMSession hbmSession = new HBMSession();
+    private Date vendorDownPaymentSearchFirstDate;
+    private Date vendorDownPaymentSearchLastDate;
+    
+    @Override
+    public String execute() {
+        try {
+            VendorDownPaymentBLL vendorDownPaymentBLL = new VendorDownPaymentBLL(hbmSession);            
+            if (!BaseSession.loadProgramSession().hasAuthority(vendorDownPaymentBLL.MODULECODE, EnumAuthorizationString.toString(EnumAuthorizationString.ENUM_AuthorizationString.VIEW), hbmSession)) {
+                return "redirect";
+            }            
+            vendorDownPaymentSearchFirstDate=DateUtils.getFirstDateOfMonth(BaseSession.loadProgramSession().getPeriodYear(), BaseSession.loadProgramSession().getPeriodMonth());
+            vendorDownPaymentSearchLastDate=DateUtils.getLastDateOfMonth(BaseSession.loadProgramSession().getPeriodYear(), BaseSession.loadProgramSession().getPeriodMonth());;
+            return SUCCESS;
+        }
+        catch(Exception ex) {
+            return SUCCESS;
+        }
+    }
+
+    public HBMSession getHbmSession() {
+        return hbmSession;
+    }
+
+    public void setHbmSession(HBMSession hbmSession) {
+        this.hbmSession = hbmSession;
+    }
+
+    public Date getVendorDownPaymentSearchFirstDate() {
+        return vendorDownPaymentSearchFirstDate;
+    }
+
+    public void setVendorDownPaymentSearchFirstDate(Date vendorDownPaymentSearchFirstDate) {
+        this.vendorDownPaymentSearchFirstDate = vendorDownPaymentSearchFirstDate;
+    }
+
+    public Date getVendorDownPaymentSearchLastDate() {
+        return vendorDownPaymentSearchLastDate;
+    }
+
+    public void setVendorDownPaymentSearchLastDate(Date vendorDownPaymentSearchLastDate) {
+        this.vendorDownPaymentSearchLastDate = vendorDownPaymentSearchLastDate;
+    }
+    
+    
+}

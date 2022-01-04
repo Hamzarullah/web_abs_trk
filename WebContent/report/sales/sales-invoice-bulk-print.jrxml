@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sales_invoice_bulk_print" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1269722013523853"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="573"/>
+	<parameter name="prmNamaTerang" class="java.lang.String"/>
+	<parameter name="prmCode" class="java.lang.String"/>
+	<parameter name="prmTerbilang" class="java.lang.String"/>
+	<parameter name="image" class="java.io.InputStream"/>
+	<parameter name="prmNote" class="java.lang.String"/>
+	<parameter name="prmTtd" class="java.lang.String"/>
+	<parameter name="prmLogo" class="java.lang.String"/>
+	<parameter name="prmName" class="java.lang.String"/>
+	<parameter name="prmACNo" class="java.lang.String"/>
+	<parameter name="prmACName" class="java.lang.String"/>
+	<parameter name="prmBankName" class="java.lang.String"/>
+	<parameter name="prmBankBranch" class="java.lang.String"/>
+	<parameter name="prmRefNo" class="java.lang.String"/>
+	<parameter name="prmInvoiceRemark1" class="java.lang.String"/>
+	<parameter name="prmInvoiceRemark2" class="java.lang.String"/>
+	<parameter name="prmInvoiceRemark3" class="java.lang.String"/>
+	<parameter name="prmInvoiceCode" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+        sal_invoice.code,
+        sal_invoice.InvoiceNo,
+        mst_company.Phone1 AS Phone1,
+        mst_company.Email AS EmailAddress,
+        sal_invoice.TransactionDate,
+        CONCAT(UCASE(LEFT(MONTHNAME(sal_invoice.TransactionDate),3)),'-',sal_invoice.InvoiceYear)AS PeriodInvoice,
+        sal_invoice.DueDate,
+        sal_invoice.CustomerCode,
+        sal_invoice.`BACustomerPic1` AS BACustomerPic1,
+        sal_invoice.`BACustomerName` AS CustomerName,
+        sal_invoice.`BACustomerAddress` AS CustomerAddress,
+        sal_invoice.`BACustomerPhone1` AS CustomerPhone1,
+        sal_invoice.`BACustomerFax` AS CustomerFax,
+        IFNULL(mst_city.`Name`,'') AS CustomerCity,
+        sal_invoice.CurrencyCode,
+        mst_currency.name AS currencyName,
+        sal_invoice.ExchangeRate,
+        sal_invoice.PaymentTermCode,
+        mst_payment_term.name AS paymentTermName,
+        mst_payment_term.days AS paymentTermDays,
+        CASE WHEN `sal_invoice`.`BankAccountStatus`='VA' THEN
+            sal_invoice.`VirtualAccountNo`
+             WHEN `sal_invoice`.`BankAccountStatus`='BA' THEN
+                mst_bank_account.`ACNo`
+        END AS acNo,
+        CASE WHEN `sal_invoice`.`BankAccountStatus`='VA' THEN
+            sal_invoice.`VirtualAccountName`
+             WHEN `sal_invoice`.`BankAccountStatus`='BA' THEN
+                mst_bank_account.`ACName`
+        END AS acName,
+            CASE WHEN `sal_invoice`.`BankAccountStatus`='VA' THEN
+            sal_invoice.`VirtualAccountBankName`
+             WHEN `sal_invoice`.`BankAccountStatus`='BA' THEN
+                mst_bank_account.`BankName`
+        END AS acBankName,
+            CASE WHEN `sal_invoice`.`BankAccountStatus`='VA' THEN
+            sal_invoice.`VirtualAccountBankBranch`
+             WHEN `sal_invoice`.`BankAccountStatus`='BA' THEN
+                mst_bank_account.`BankBranch`
+        END AS acBankBranch,
+        sal_invoice.refNo,
+        CASE WHEN DAY(CURRENT_DATE) < 10 THEN CONCAT(sal_sales_order.CustomerNo,'0',CAST(DAY(CURRENT_DATE)AS CHAR))
+        ELSE CONCAT(sal_sales_order.CustomerNo,CAST(DAY(CURRENT_DATE)AS CHAR))
+        END AS RefCustomerNo,
+        sal_invoice.TotalTransactionAmount,
+        sal_invoice.DiscountAmount,
+        (sal_invoice.TotalTransactionAmount - sal_invoice.DiscountAmount)AS SubTotal,
+        sal_invoice.vatPercent,
+        sal_invoice.vatAmount,
+        sal_invoice.OtherFeeAmount,
+        sal_invoice.otherFeeRemark,
+        sal_invoice.Otherfeeaccountcode,
+        mst_chart_of_account.name AS otherfeeaccountName,
+        sal_invoice.GrandTotalAmount,
+        CONCAT((SELECT `fn_terbilang`((sal_invoice.TotalTransactionAmount) - (sal_invoice.DiscountAmount) + (sal_invoice.vatAmount))),' ',mst_currency.`Name`)AS terbilang,
+        sal_invoice.PaidAmount,
+        sal_invoice_detail.headerCode,
+       sal_invoice_detail.ItemCode,
+       mst_item.name AS ItemName,
+       sal_invoice_detail.price,
+       sal_invoice_detail.Quantity,
+       sal_invoice_detail.totalAmount,
+       (sal_invoice_detail.Quantity) * (sal_invoice_detail.price) AS TotalAmount,
+       (sal_invoice.TotalTransactionAmount) - (sal_invoice.DiscountAmount) + (sal_invoice.vatAmount) AS GrandTotal,
+
+       sal_invoice_detail.remark
+    FROM
+        sal_invoice
+    INNER JOIN sal_sales_order ON sal_invoice.PreSalesOrderNo=sal_sales_order.Code
+    INNER JOIN
+        sal_invoice_detail
+            ON sal_invoice_detail.headerCode=sal_invoice.Code
+    INNER JOIN
+        mst_item
+            ON mst_item.code = sal_invoice_detail.ItemCode
+    INNER JOIN
+        mst_customer
+            ON sal_invoice.CustomerCode=mst_customer.Code
+    INNER JOIN
+        mst_currency
+            ON sal_invoice.CurrencyCode=mst_currency.code
+    INNER JOIN
+        mst_payment_term
+            ON sal_invoice.PaymentTermCode=mst_payment_term.Code
+    INNER JOIN
+        mst_branch
+            ON sal_invoice.branchCode = mst_branch.Code
+    INNER JOIN
+        mst_company
+            ON sal_invoice.companyCode = mst_company.Code
+    LEFT JOIN
+        mst_chart_of_account
+            ON sal_invoice.Otherfeeaccountcode=mst_chart_of_account.code
+    left join `mst_bank_account` on sal_invoice.`BankAccountCode`=mst_bank_account.`Code`
+    LEFT JOIN
+        mst_city
+            ON mst_city.`Code` = sal_invoice.`BACustomerCityCode`
+    WHERE
+        sal_invoice.PostingStatus=TRUE
+        AND sal_invoice.Code IN('$P!{prmInvoiceCode}')
+    ORDER BY sal_invoice.InvoiceNo ASC]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="InvoiceNo" class="java.lang.String"/>
+	<field name="Phone1" class="java.lang.String"/>
+	<field name="EmailAddress" class="java.lang.String"/>
+	<field name="TransactionDate" class="java.util.Date"/>
+	<field name="PeriodInvoice" class="java.lang.String"/>
+	<field name="DueDate" class="java.util.Date"/>
+	<field name="CustomerCity" class="java.lang.String"/>
+	<field name="BACustomerPic1" class="java.lang.String"/>
+	<field name="CustomerCode" class="java.lang.String"/>
+	<field name="CustomerName" class="java.lang.String"/>
+	<field name="CustomerAddress" class="java.lang.String"/>
+	<field name="terbilang" class="java.lang.String"/>
+	<field name="CustomerPhone1" class="java.lang.String"/>
+	<field name="CustomerFax" class="java.lang.String"/>
+	<field name="CurrencyCode" class="java.lang.String"/>
+	<field name="CurrencyName" class="java.lang.String"/>
+	<field name="ExchangeRate" class="java.math.BigDecimal"/>
+	<field name="PaymentTermCode" class="java.lang.String"/>
+	<field name="PaymentTermName" class="java.lang.String"/>
+	<field name="PaymentTermDays" class="java.lang.String"/>
+	<field name="Price" class="java.math.BigDecimal"/>
+	<field name="ItemName" class="java.lang.String"/>
+	<field name="RefNo" class="java.lang.String"/>
+	<field name="TotalTransactionAmount" class="java.math.BigDecimal"/>
+	<field name="DiscountAmount" class="java.math.BigDecimal"/>
+	<field name="SubTotal" class="java.math.BigDecimal"/>
+	<field name="VATPercent" class="java.math.BigDecimal"/>
+	<field name="VATAmount" class="java.math.BigDecimal"/>
+	<field name="OtherFeeAmount" class="java.math.BigDecimal"/>
+	<field name="OtherFeeRemark" class="java.lang.String"/>
+	<field name="OtherFeeAccountcode" class="java.lang.String"/>
+	<field name="OtherFeeAccountName" class="java.lang.String"/>
+	<field name="GrandTotalAmount" class="java.math.BigDecimal"/>
+	<field name="PaidAmount" class="java.math.BigDecimal"/>
+	<field name="TotalAmount" class="java.math.BigDecimal"/>
+	<field name="Quantity" class="java.lang.String"/>
+	<field name="Remark" class="java.lang.String"/>
+	<field name="refCustomerNo" class="java.lang.String"/>
+	<field name="acNo" class="java.lang.String"/>
+	<field name="acName" class="java.lang.String"/>
+	<field name="acBankName" class="java.lang.String"/>
+	<field name="acBankBranch" class="java.lang.String"/>
+	<variable name="GRAND_TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{Total_Transaksi}-$V{Pajak}]]></variableExpression>
+	</variable>
+	<variable name="Pajak" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{Total_Transaksi}*10/100]]></variableExpression>
+	</variable>
+	<variable name="Total_Transaksi" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TotalAmount}]]></variableExpression>
+	</variable>
+	<variable name="tes" class="java.lang.String" resetType="Group" resetGroup="grup footer" incrementType="Column"/>
+	<group name="grup footer" isResetPageNumber="true" footerPosition="StackAtBottom">
+		<groupExpression><![CDATA[$F{Code}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="367">
+				<rectangle radius="10">
+					<reportElement x="15" y="110" width="525" height="119"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="34" y="229" width="84" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Hormat Kami,]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="309" y="4" width="120" height="11"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[TOTAL TRANSACTION]]></text>
+				</staticText>
+				<line>
+					<reportElement x="430" y="66" width="97" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="310" y="67" width="120" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL DUE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="41" width="120" height="11"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[VAT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="17" width="120" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[DISCOUNT]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="29" width="120" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[SUBTOTAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="310" y="51" width="120" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[OTHER FEE]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="80" y="86" width="429" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["\""+$F{terbilang}+"\""]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="56" y="128" width="474" height="14"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{acBankName}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="28" y="86" width="49" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Terbilang :]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="426" y="4" width="100" height="11"/>
+					<textElement textAlignment="Right">
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TotalTransactionAmount}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="427" y="17" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DiscountAmount}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="427" y="29" width="100" height="12"/>
+					<textElement textAlignment="Right">
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SubTotal}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="427" y="41" width="100" height="11"/>
+					<textElement textAlignment="Right">
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{VATAmount}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="427" y="51" width="100" height="15"/>
+					<textElement textAlignment="Right">
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{OtherFeeAmount}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="56" y="140" width="474" height="14"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["A/c  : "+$F{acNo}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="56" y="153" width="474" height="14"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["A/n  : "+$F{acName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="56" y="166" width="474" height="14"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Cab : "+$F{acBankBranch}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="42" y="179" width="488" height="13"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmInvoiceRemark2}+" " +$F{EmailAddress} + " atau konfirmasi melalui telp di "]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="427" y="67" width="100" height="15"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{GrandTotalAmount}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="42" y="116" width="488" height="14"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmInvoiceRemark1}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="44" y="203" width="453" height="26"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmInvoiceRemark3}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="34" y="329" width="84" height="16"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Tan Budi]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="42" y="191" width="488" height="12"/>
+					<textElement>
+						<font fontName="Gill Sans MT" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{Phone1}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="34" y="345" width="81" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="32" y="345" width="84" height="15"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Account Dept.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="32" y="116" width="12" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[1.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="32" y="179" width="12" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[2.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="32" y="203" width="12" height="11"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Gill Sans MT" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[3.]]></text>
+				</staticText>
+				<rectangle radius="10">
+					<reportElement mode="Transparent" x="15" y="82" width="525" height="24"/>
+				</rectangle>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="812" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="12" y="256" width="525" height="178"/>
+			</rectangle>
+			<line>
+				<reportElement x="43" y="256" width="1" height="178"/>
+			</line>
+			<line>
+				<reportElement x="418" y="256" width="1" height="178"/>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="257" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="105" width="135" height="33"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Gill Sans MT" size="20" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[INVOICE]]></text>
+			</staticText>
+			<line>
+				<reportElement x="20" y="138" width="90" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<rectangle radius="10">
+				<reportElement x="15" y="147" width="295" height="99"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="23" y="150" width="76" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Kepada Yth.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="165" width="11" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="165" width="72" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Invoice Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="192" width="72" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Billing Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="207" width="72" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Due Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="192" width="11" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="206" width="11" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement x="410" y="206" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DueDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="150" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{InvoiceNo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement x="410" y="165" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TransactionDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMM-YY">
+				<reportElement x="410" y="192" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PeriodInvoice}]]></textFieldExpression>
+			</textField>
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="321" y="147" width="216" height="99"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="399" y="150" width="11" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="150" width="72" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Invoice No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="328" y="179" width="72" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Ref No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="399" y="179" width="14" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="409" y="179" width="117" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{refCustomerNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="163" width="248" height="75"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BACustomerPic1}+"\n"+
+$F{CustomerName}+"\n"+
+$F{CustomerAddress}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="1" width="23" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="1" width="364" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<line>
+				<reportElement x="15" y="18" width="522" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="435" y="1" width="87" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL (IDR)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="435" y="0" width="87" height="11"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TotalAmount}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="1" width="23" height="11" printWhenGroupChanges="grup footer"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grup footer_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="56" y="0" width="325" height="12" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Remark}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

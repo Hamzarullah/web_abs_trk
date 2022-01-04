@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory name="web_abs_trk">
+    <!-- postgres  -->  
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://103.56.148.126:3306/mrp_trk_ulla?/autoReconnect=true</property>
+    <!--<property name="hibernate.connection.url">jdbc:mysql://110.5.111.36:3306/mrp_trk_sync?/autoReconnect=true</property>--> 
+     
+    <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>    
+    <property name="hibernate.connection.username">mrpuser</property>
+    <property name="hibernate.connection.password">Cupu1234!@#$</property>
+    <!--<property name="hibernate.connection.password">Cupu1234</property>-->
+    <!--<property name="hibernate.connection.password">7772b8485de7e7c2dfd6371f08ef4a41</property>-->
+    <property name="hibernate.show_sql">true</property>
+     
+     
+    <property name="hibernate.jdbc.batch_size">100</property>
+    <property name="hibernate.order_inserts">true</property>
+    <property name="hibernate.order_updates">true</property> 
+    <property name="hibernate.format_sql">true</property>
+    <property name="use_sql_comments">false</property>
+    <property name="default_batch_fetch_size">4</property>
+    <property name="hibernate.connection.pool_size">150</property>
+    <property name="hibernate.connection.autocommit">false</property>
+    <property name="hibernate.generate_statistics">false</property>
+    
+    <!-- Finance -->
+    <mapping class="com.inkombizz.finance.model.BankPayment"/>   
+    <mapping class="com.inkombizz.finance.model.BankPaymentDetail"/>
+    <mapping class="com.inkombizz.finance.model.BankPaymentPaymentRequest"/>
+    <mapping class="com.inkombizz.finance.model.BankReceived"/>
+    <mapping class="com.inkombizz.finance.model.BankReceivedDeposit"/>
+    <mapping class="com.inkombizz.finance.model.BankReceivedDetail"/>
+    <mapping class="com.inkombizz.finance.model.CashPayment"/>
+    <mapping class="com.inkombizz.finance.model.CashPaymentDetail"/>
+    <mapping class="com.inkombizz.finance.model.CashPaymentPaymentRequest"/>
+    <mapping class="com.inkombizz.finance.model.CashReceived"/>
+    <mapping class="com.inkombizz.finance.model.CashReceivedDetail"/>
+    <mapping class="com.inkombizz.finance.model.CashReceivedDeposit"/>
+    <mapping class="com.inkombizz.finance.model.CustomerCreditNote"/>
+    <mapping class="com.inkombizz.finance.model.CustomerCreditNoteDetail"/>
+    <mapping class="com.inkombizz.finance.model.CustomerDebitNote"/>
+    <mapping class="com.inkombizz.finance.model.CustomerDebitNoteDetail"/>
+    <mapping class="com.inkombizz.finance.model.GiroPayment"/>
+    <mapping class="com.inkombizz.finance.model.GiroReceived"/>
+    <mapping class="com.inkombizz.finance.model.GeneralJournal"/>
+    <mapping class="com.inkombizz.finance.model.GeneralJournalDetail"/>
+    <mapping class="com.inkombizz.finance.model.PaymentRequest"/>
+    <mapping class="com.inkombizz.finance.model.PaymentRequestDetail"/>
+    <mapping class="com.inkombizz.finance.model.VendorCreditNote"/>
+    <mapping class="com.inkombizz.finance.model.VendorCreditNoteDetail"/>
+    <mapping class="com.inkombizz.finance.model.VendorDebitNote"/>
+    <mapping class="com.inkombizz.finance.model.VendorDebitNoteDetail"/>
+    <mapping class="com.inkombizz.finance.model.VendorDownPayment"/>
+    <mapping class="com.inkombizz.finance.model.VendorDownPaymentUsed"/>
+    <mapping class="com.inkombizz.finance.model.VendorDownPaymentPaid"/>
+    <mapping class="com.inkombizz.finance.model.VendorInvoice"/>
+    <mapping class="com.inkombizz.finance.model.VendorInvoiceForexGainLoss"/>
+    <mapping class="com.inkombizz.finance.model.VendorInvoiceGoodsReceivedNote"/>
+    <mapping class="com.inkombizz.finance.model.VendorInvoiceItemDetail"/>
+    <mapping class="com.inkombizz.finance.model.VendorInvoiceVendorDownPayment"/>
+    
+    <!--Engineering-->
+    <mapping class="com.inkombizz.engineering.model.BillOfMaterial"/>
+    <mapping class="com.inkombizz.engineering.model.BillOfMaterialPartDetail"/>
+    <mapping class="com.inkombizz.engineering.model.InternalMemoProduction"/>
+    <mapping class="com.inkombizz.engineering.model.InternalMemoProductionDetail"/>
+    
+    <!-- Inventory -->
+    <mapping class="com.inkombizz.inventory.model.AdjustmentIn"/>
+    <mapping class="com.inkombizz.inventory.model.AdjustmentInItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.AdjustmentInSerialNoDetail"/>
+    <mapping class="com.inkombizz.inventory.model.AdjustmentOut"/>
+    <mapping class="com.inkombizz.inventory.model.AdjustmentOutItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.AdjustmentOutSerialNoDetail"/>
+    <mapping class="com.inkombizz.inventory.model.AssemblyJobOrder"/>
+    <mapping class="com.inkombizz.inventory.model.AssemblyJobOrderItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.AssemblyRealization"/>
+    <mapping class="com.inkombizz.inventory.model.AssemblyRealizationItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.GoodsReceivedNote"/>
+    <mapping class="com.inkombizz.inventory.model.GoodsReceivedNoteItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.GoodsReceivedNoteItemSerialNoDetail"/>
+    <mapping class="com.inkombizz.inventory.model.ItemMaterialStockLocation"/>
+    <mapping class="com.inkombizz.inventory.model.InventoryActualStock"/>
+    <mapping class="com.inkombizz.inventory.model.InventoryMinusStock"/>
+    <mapping class="com.inkombizz.inventory.model.PickingListSalesOrder"/>
+    <mapping class="com.inkombizz.inventory.model.PickingListSalesOrder"/>
+    <mapping class="com.inkombizz.inventory.model.WarehouseTransferIn"/>
+    <mapping class="com.inkombizz.inventory.model.WarehouseTransferInItemDetail"/>
+    <mapping class="com.inkombizz.inventory.model.WarehouseTransferOut"/>
+    <mapping class="com.inkombizz.inventory.model.WarehouseTransferOut"/>
+    <mapping class="com.inkombizz.inventory.model.WarehouseTransferOutItemDetail"/>
+
+    <!-- Master -->
+    <mapping class="com.inkombizz.master.model.AdditionalFee"/>
+    <mapping class="com.inkombizz.master.model.AssetCategory"/>
+    <mapping class="com.inkombizz.master.model.Bank"/>
+    <mapping class="com.inkombizz.master.model.BankAccount"/>
+    <mapping class="com.inkombizz.master.model.Branch"/>
+    <mapping class="com.inkombizz.master.model.BusinessEntity"/>
+    <mapping class="com.inkombizz.master.model.BillOfMaterialTemplate"/>
+    <mapping class="com.inkombizz.master.model.BillOfMaterialTemplateDetail"/>
+    <mapping class="com.inkombizz.master.model.CadDocumentForApproval"/>
+    <mapping class="com.inkombizz.master.model.CashAccount"/>
+    <mapping class="com.inkombizz.master.model.ChartOfAccount"/>
+    <mapping class="com.inkombizz.master.model.City"/>
+    <mapping class="com.inkombizz.master.model.Country"/>
+    <mapping class="com.inkombizz.master.model.CoDriver"/>
+    <mapping class="com.inkombizz.master.model.Currency"/>
+    <mapping class="com.inkombizz.master.model.Customer"/>
+    <mapping class="com.inkombizz.master.model.CustomerAddress"/>
+    <mapping class="com.inkombizz.master.model.CustomerCategory"/>
+    <mapping class="com.inkombizz.master.model.CustomerContact"/>
+    <mapping class="com.inkombizz.master.model.CustomerDepositType"/>
+    <mapping class="com.inkombizz.master.model.CustomerDepositTypeChartOfAccount"/>
+    <mapping class="com.inkombizz.master.model.DcasDesign"/>
+    <mapping class="com.inkombizz.master.model.DcasFireSafeByDesign"/>
+    <mapping class="com.inkombizz.master.model.DcasHydroTest"/>
+    <mapping class="com.inkombizz.master.model.DcasLegalRequirements"/>
+    <mapping class="com.inkombizz.master.model.DcasMarking"/>
+    <mapping class="com.inkombizz.master.model.DcasNde"/>
+    <mapping class="com.inkombizz.master.model.DcasTesting"/>
+    <mapping class="com.inkombizz.master.model.DcasVisualExamination"/>
+    <mapping class="com.inkombizz.master.model.Division"/>
+    <mapping class="com.inkombizz.master.model.Department"/>
+    <mapping class="com.inkombizz.master.model.Driver"/>
+    <mapping class="com.inkombizz.master.model.Education"/>
+    <mapping class="com.inkombizz.master.model.Employee"/>
+    <mapping class="com.inkombizz.master.model.ExchangeRate"/>
+    <mapping class="com.inkombizz.master.model.Expedition"/>
+    <mapping class="com.inkombizz.master.model.Island"/>
+    <mapping class="com.inkombizz.master.model.Item"/>
+    <mapping class="com.inkombizz.master.model.ItemArm"/>
+    <mapping class="com.inkombizz.master.model.ItemArmPin"/>
+    <mapping class="com.inkombizz.master.model.ItemBackseat"/>
+    <mapping class="com.inkombizz.master.model.ItemBall"/>
+    <mapping class="com.inkombizz.master.model.ItemBody"/>
+    <mapping class="com.inkombizz.master.model.ItemBodyConstruction"/>
+    <mapping class="com.inkombizz.master.model.ItemBolt"/>
+    <mapping class="com.inkombizz.master.model.ItemBore"/>
+    <mapping class="com.inkombizz.master.model.ItemBrand"/>
+    <mapping class="com.inkombizz.master.model.ItemCategory"/>
+    <mapping class="com.inkombizz.master.model.ItemDisc"/>
+    <mapping class="com.inkombizz.master.model.ItemDivision"/>
+    <mapping class="com.inkombizz.master.model.ItemEndCon"/>
+    <mapping class="com.inkombizz.master.model.ItemFinishGoods"/>
+    <mapping class="com.inkombizz.master.model.ItemHingePin"/>
+    <mapping class="com.inkombizz.master.model.ItemMaterial"/>
+    <mapping class="com.inkombizz.master.model.ItemMaterialVendor"/>
+    <mapping class="com.inkombizz.master.model.ItemOperator"/>
+    <mapping class="com.inkombizz.master.model.ItemRating"/>
+    <mapping class="com.inkombizz.master.model.ItemPlates"/>
+    <mapping class="com.inkombizz.master.model.ItemSeal"/>
+    <mapping class="com.inkombizz.master.model.ItemSeat"/>
+    <mapping class="com.inkombizz.master.model.ItemSeatDesign"/>
+    <mapping class="com.inkombizz.master.model.ItemSeatInsert"/>
+    <mapping class="com.inkombizz.master.model.ItemShaft"/>
+    <mapping class="com.inkombizz.master.model.ItemSize"/>
+    <mapping class="com.inkombizz.master.model.ItemSpring"/>
+    <mapping class="com.inkombizz.master.model.ItemStem"/>
+    <mapping class="com.inkombizz.master.model.ItemStopPin"/>
+    <mapping class="com.inkombizz.master.model.ItemSubCategory"/>
+    <mapping class="com.inkombizz.master.model.ItemTypeDesign"/>
+    <mapping class="com.inkombizz.master.model.JobPosition"/>
+    <mapping class="com.inkombizz.master.model.Part"/>
+    <mapping class="com.inkombizz.master.model.PaymentTerm"/>
+    <mapping class="com.inkombizz.master.model.ProductType"/>
+    <mapping class="com.inkombizz.master.model.Project"/>
+    <mapping class="com.inkombizz.master.model.Province"/>
+    <mapping class="com.inkombizz.master.model.PurchaseDestination"/>
+    <mapping class="com.inkombizz.master.model.Rack"/>
+    <mapping class="com.inkombizz.master.model.RackItem"/>
+    <mapping class="com.inkombizz.master.model.RackType"/>
+    <mapping class="com.inkombizz.master.model.Reason"/>
+    <mapping class="com.inkombizz.master.model.ReasonModule"/>
+    <mapping class="com.inkombizz.master.model.ReasonModuleDetail"/>
+    <mapping class="com.inkombizz.master.model.Religion"/>
+    <mapping class="com.inkombizz.master.model.SalesPerson"/>
+    <mapping class="com.inkombizz.master.model.TermOfDelivery"/>
+    <mapping class="com.inkombizz.master.model.UnitOfMeasure"/>
+    <mapping class="com.inkombizz.master.model.ValveType"/>
+    <mapping class="com.inkombizz.master.model.ValveTypeComponent"/>
+    <mapping class="com.inkombizz.master.model.ValveTypeComponentDetail"/>
+    <mapping class="com.inkombizz.master.model.Vendor"/>
+    <mapping class="com.inkombizz.master.model.VendorCategory"/>
+    <mapping class="com.inkombizz.master.model.VendorContact"/>
+    <mapping class="com.inkombizz.master.model.VendorDepositType"/>
+    <mapping class="com.inkombizz.master.model.VendorDepositTypeChartOfAccount"/>
+    <mapping class="com.inkombizz.master.model.Warehouse"/>
+   
+    <!-- PPIC -->
+    <mapping class="com.inkombizz.ppic.model.ProductionPlanningOrder"/>
+    <mapping class="com.inkombizz.ppic.model.ProductionPlanningOrderItemDetail"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequest"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequestItemBookingDetail"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequestItemBookingPartDetail"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequestItemProcessedPartDetail"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequestItemRequestDetail"/>
+    <mapping class="com.inkombizz.ppic.model.ItemMaterialRequestItemRequestPartDetail"/>
+    
+    <!-- Purchase -->
+    <mapping class="com.inkombizz.purchasing.model.PurchaseOrder"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseOrderAdditionalFee"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseOrderDetail"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseOrderItemDeliveryDate"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseOrderPurchaseRequest"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseRequestNonItemMaterialRequest"/>
+    <mapping class="com.inkombizz.purchasing.model.PurchaseRequestNonItemMaterialRequestDetail"/>
+    
+    <!-- Sales -->
+    <mapping class="com.inkombizz.sales.model.ContractReview"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewCADDocumentApproval"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASDesign"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASFireSafeByDesign"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASHydroTest"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASLegalRequirements"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASMarking"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASNde"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASTesting"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewDCASVisualExamination"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewSalesQuotation"/>
+    <mapping class="com.inkombizz.sales.model.ContractReviewValveType"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrder"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrderAdditionalFee"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrderItemDeliveryDate"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrderItemDetail"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrderPaymentTerm"/>
+    <mapping class="com.inkombizz.sales.model.CustomerBlanketOrderSalesQuotation"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrder"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrderAdditionalFee"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrderItemDeliveryDate"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrderItemDetail"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrderPaymentTerm"/>
+    <mapping class="com.inkombizz.sales.model.CustomerSalesOrderSalesQuotation"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrder"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrderAdditionalFee"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrderItemDeliveryDate"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrderItemDetail"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrderPaymentTerm"/>
+    <mapping class="com.inkombizz.sales.model.CustomerPurchaseOrderSalesQuotation"/>
+    <mapping class="com.inkombizz.sales.model.InternalMemoMaterial"/>
+    <mapping class="com.inkombizz.sales.model.InternalMemoMaterialDetail"/>
+    <mapping class="com.inkombizz.sales.model.ListOfApplicableDocument"/>
+    <mapping class="com.inkombizz.sales.model.ListOfApplicableDocumentDetail"/>
+    <mapping class="com.inkombizz.sales.model.RequestForQuotation"/>
+    <mapping class="com.inkombizz.sales.model.SalesQuotation"/>
+    <mapping class="com.inkombizz.sales.model.SalesQuotationDetail"/>
+
+    <!-- Security -->
+    <mapping class="com.inkombizz.security.model.Authorization"/>
+    <mapping class="com.inkombizz.security.model.DataProtection"/>
+    <mapping class="com.inkombizz.security.model.Menu"/>
+    <mapping class="com.inkombizz.security.model.Role"/>
+    <mapping class="com.inkombizz.security.model.RoleAuthorization"/>
+    <mapping class="com.inkombizz.security.model.User"/>
+    <mapping class="com.inkombizz.security.model.UserBranch"/>
+    <mapping class="com.inkombizz.security.model.UserDivision"/>
+    
+    <!-- System -->
+    <mapping class="com.inkombizz.system.model.Module"/>
+    <mapping class="com.inkombizz.system.model.TransactionLog"/>
+    <mapping class="com.inkombizz.system.model.Setup"/>
+    
+  </session-factory>
+</hibernate-configuration>

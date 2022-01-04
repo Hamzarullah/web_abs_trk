@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="active_sales_order_non_price" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="10">
+	<property name="ireport.zoom" value="1.0245201830476058"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmBranch1" class="java.lang.String"/>
+	<parameter name="prmBranch2" class="java.lang.String"/>
+	<parameter name="prmCompany1" class="java.lang.String"/>
+	<parameter name="prmCompany2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    sal_sales_order.Code,
+    sal_sales_order.BranchCode,
+    mst_branch.Name as BranchName,
+    sal_sales_order.CompanyCode,
+    mst_company.Name as CompanyName,
+    sal_sales_order.`EmployeeMarketingCode` AS MarketingCode,
+    mst_employee.`Name` AS MarketingName,
+    sal_sales_order.`CustomerNo`,
+    sal_sales_order.`CustomerCode`,
+    mst_customer.`Name` AS CustomerName,
+    mst_customer.Address AS CustomerAddress,
+    sal_sales_order.`InvoiceStatus`,
+    sal_sales_order.`ClosedStatus`,
+    CONCAT(sal_sales_order.Approval1Status, sal_sales_order.Approval2Status) as ApprovalStatus
+    FROM
+    sal_sales_order
+    INNER JOIN mst_employee mst_employee ON mst_employee.`Code` = sal_sales_order.`EmployeeMarketingCode`
+    INNER JOIN sal_sales_order_detail sal_sales_order_detail ON sal_sales_order_detail.`Headercode` = sal_sales_order.`Code`
+    INNER JOIN mst_customer ON mst_customer.`Code` = sal_sales_order.`CustomerCode`
+    INNER JOIN mst_company on mst_company.Code = sal_sales_order.CompanyCode
+    INNER JOIN mst_branch on mst_branch.Code = sal_sales_order.BranchCode
+    WHERE sal_sales_order.`InvoiceStatus` =1
+    AND sal_sales_order.`ClosedStatus`=0
+    AND sal_sales_order.BranchCode BETWEEN $P{prmBranch1} AND $P{prmBranch2}
+	AND sal_sales_order.CompanyCode BETWEEN $P{prmCompany1} AND $P{prmCompany2}
+    ORDER BY sal_sales_order.BranchCode,sal_sales_order.CompanyCode, sal_sales_order.CustomerNo ASC]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="BranchCode" class="java.lang.String"/>
+	<field name="BranchName" class="java.lang.String"/>
+	<field name="CompanyCode" class="java.lang.String"/>
+	<field name="CompanyName" class="java.lang.String"/>
+	<field name="MarketingCode" class="java.lang.String"/>
+	<field name="MarketingName" class="java.lang.String"/>
+	<field name="CustomerNo" class="java.lang.String"/>
+	<field name="CustomerCode" class="java.lang.String"/>
+	<field name="CustomerName" class="java.lang.String"/>
+	<field name="CustomerAddress" class="java.lang.String"/>
+	<field name="ApprovalStatus" class="java.lang.String"/>
+	<group name="Branch">
+		<groupExpression><![CDATA[$F{BranchCode}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<frame>
+					<reportElement x="1" y="0" width="298" height="20"/>
+					<box>
+						<pen lineWidth="1.25"/>
+						<topPen lineWidth="1.25"/>
+						<leftPen lineWidth="1.25"/>
+						<bottomPen lineWidth="1.25"/>
+						<rightPen lineWidth="1.25"/>
+					</box>
+					<staticText>
+						<reportElement x="79" y="3" width="10" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[ - ]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="51" y="3" width="30" height="15"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{BranchCode}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="88" y="3" width="209" height="15"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{BranchName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="2" y="3" width="45" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Branch]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="47" y="3" width="3" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+				</frame>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="company" isReprintHeaderOnEachPage="true">
+		<groupExpression><![CDATA[$F{CompanyName}]]></groupExpression>
+		<groupHeader>
+			<band height="68">
+				<frame>
+					<reportElement x="1" y="2" width="299" height="20"/>
+					<box>
+						<pen lineWidth="1.25"/>
+						<topPen lineWidth="1.25"/>
+						<leftPen lineWidth="1.25"/>
+						<bottomPen lineWidth="1.25"/>
+						<rightPen lineWidth="1.25"/>
+					</box>
+					<staticText>
+						<reportElement x="79" y="3" width="10" height="15"/>
+						<textElement textAlignment="Center" verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[ - ]]></text>
+					</staticText>
+					<textField>
+						<reportElement x="51" y="3" width="30" height="15"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CompanyCode}]]></textFieldExpression>
+					</textField>
+					<textField>
+						<reportElement x="88" y="3" width="209" height="15"/>
+						<textElement verticalAlignment="Middle">
+							<font fontName="Tahoma" size="9" isBold="false"/>
+						</textElement>
+						<textFieldExpression><![CDATA[$F{CompanyName}]]></textFieldExpression>
+					</textField>
+					<staticText>
+						<reportElement x="2" y="3" width="45" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[Company]]></text>
+					</staticText>
+					<staticText>
+						<reportElement x="47" y="3" width="3" height="15"/>
+						<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+							<font fontName="Tahoma" size="9" isBold="true"/>
+						</textElement>
+						<text><![CDATA[:]]></text>
+					</staticText>
+				</frame>
+				<staticText>
+					<reportElement x="3" y="38" width="32" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[No.]]></text>
+				</staticText>
+				<line>
+					<reportElement x="-1" y="38" width="802" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="0" y="64" width="801" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="94" y="38" width="69" height="28"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[SO No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="165" y="38" width="64" height="30"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Marketing Code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="231" y="38" width="98" height="30"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Marketing Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="331" y="39" width="67" height="28"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Customer Code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="536" y="39" width="212" height="29"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Customer Address]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="400" y="39" width="134" height="28"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Customer Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="37" y="38" width="56" height="28"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Customer No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="750" y="38" width="54" height="28"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Approval Status]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="4">
+				<line>
+					<reportElement x="0" y="0" width="802" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="55">
+			<textField>
+				<reportElement x="2" y="1" width="364" height="26"/>
+				<textElement>
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="27" width="366" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Active Sales Order Non Price]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="769" y="27" width="20" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="750" y="27" width="19" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="672" y="27" width="50" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="728" y="27" width="22" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="672" y="7" width="50" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tanggal :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="728" y="7" width="75" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="51" splitType="Stretch">
+			<printWhenExpression><![CDATA[(($V{PAGE_NUMBER} == 1) ? Boolean.FALSE : Boolean.TRUE)]]></printWhenExpression>
+			<staticText>
+				<reportElement x="670" y="6" width="50" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tanggal :]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="767" y="26" width="20" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="364" height="26"/>
+				<textElement>
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="726" y="26" width="22" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="26" width="366" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Active Sales Order]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="748" y="26" width="19" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="670" y="26" width="50" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="8"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="727" y="6" width="75" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="14"/>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="2" y="23" width="800" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="0" y="0" width="33" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="2" rightIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="94" y="0" width="69" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="165" y="0" width="62" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MarketingCode}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="536" y="1" width="209" height="23"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerAddress}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="231" y="0" width="98" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MarketingName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="400" y="1" width="134" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="331" y="1" width="67" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerCode}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="35" y="0" width="56" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="">
+				<reportElement x="747" y="1" width="55" height="23" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3" tabStopWidth="180"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ApprovalStatus}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7"/>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="168">
+			<line>
+				<reportElement x="2" y="0" width="800" height="1"/>
+			</line>
+		</band>
+	</lastPageFooter>
+</jasperReport>

@@ -1,0 +1,159 @@
+
+
+ /*Input textfield & date*/
+    
+    input { 
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    input[readonly="readonly"] {
+        background:#FFF1A0;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    select { 
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .searchbox { 
+        height: 18px;
+        border-radius: 3px;
+    }
+
+    textarea{ 
+        /*background:#FFF1A0;*/
+        border-radius: 3px; 
+    }
+    
+    textarea[readonly="readonly"] {
+        background:#FFF1A0;
+        border-radius: 3px; 
+    }
+    
+    .hasDatepicker { 
+        
+        border-radius: 3px; 
+    }
+    .hasDatepicker[readonly="readonly"] { 
+        background:#FFF1A0;
+        
+        border-radius: 3px; 
+    }
+    
+    
+    
+/*style width
+    .field-max {
+        width: 100%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .field-max[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 100%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .field-min {
+        width: 5%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .field-min[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 5%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .field-low {
+        width: 15%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+
+    .field-low[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 15%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+    
+    .field-medium {
+        width: 40%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+
+    .field-medium[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 40%;
+        height: 18px;
+        border-radius: 3px; 
+        background:#FFF1A0;
+    }
+
+    .field-hight {
+        width: 65%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+
+    .field-hight[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 65%;
+        height: 18px;
+        border-radius: 3px; 
+        background:#FFF1A0;
+    }
+    
+    .field-search {
+        width: 83%;
+        height: 18px;
+        border-radius: 3px; 
+    }
+
+    .field-search[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 83%;
+        height: 18px;
+        border-radius: 3px; 
+        background:#FFF1A0;
+    }
+    */
+    
+    /*style image
+    .img-low{
+        width: 40%;
+        height: 40%;
+    }
+    .img-low[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 40%;
+        height: 40%;
+    }
+    .img-medium{
+        width: 65%;
+        height: 65%;
+    }
+    .img-medium[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 65%;
+        height: 65%;
+    }
+    .img-hight{
+        width: 80%;
+        height: 80%;
+    }
+    .img-hight[readonly="readonly"] {
+        background:#FFF1A0;
+        width: 80%;
+        height: 80%;
+    }
+    */

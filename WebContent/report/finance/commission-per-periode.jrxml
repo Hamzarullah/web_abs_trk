@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="commission_per_periode" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="BlankPage" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1269722013523675"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmFirstDate" class="java.lang.String"/>
+	<parameter name="prmLastDate" class="java.lang.String"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmFirstDateView" class="java.lang.String"/>
+	<parameter name="prmLastDateView" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL usp_Report_Commission_Per_Period(DATE($P{prmFirstDate}),DATE($P{prmLastDate}))]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="TransactionDate" class="java.util.Date"/>
+	<field name="VoucherNo" class="java.lang.String"/>
+	<field name="CommissionReceiverCode" class="java.lang.String"/>
+	<field name="CommissionReceiverName" class="java.lang.String"/>
+	<field name="Amount" class="java.math.BigDecimal"/>
+	<field name="PaidAmount" class="java.math.BigDecimal"/>
+	<field name="BalanceAmount" class="java.math.BigDecimal"/>
+	<field name="RefNo" class="java.lang.String"/>
+	<field name="Remark" class="java.lang.String"/>
+	<variable name="GrantTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{BalanceAmount}]]></variableExpression>
+	</variable>
+	<variable name="No" class="java.lang.Integer" resetType="None" incrementType="Report" calculation="Count">
+		<variableExpression><![CDATA[$V{No}.intValue()]]></variableExpression>
+	</variable>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="58" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="20" width="801" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14"/>
+				</textElement>
+				<text><![CDATA[REPORT COMMISSION PER PERIOD]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="38" width="801" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Period : "+$P{prmFirstDateView}+" to "+ $P{prmLastDateView}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="801" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="25" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[  No]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="802" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="16" width="802" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="120" y="1" width="64" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="303" y="1" width="79" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ReceiverCode]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="545" y="2" width="81" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="626" y="2" width="85" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PaidAmount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="2" width="96" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="1" width="118" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[VoucherNo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="384" y="1" width="159" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reveiver Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="712" y="1" width="90" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BalanceAmount]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="-584" y="-9" width="22" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Tahoma"/>
+					<paragraph firstLineIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="25" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{No}.intValue()+1]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="25" y="0" width="95" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Code}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="626" y="0" width="84" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PaidAmount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="543" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="120" y="0" width="64" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TransactionDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="186" y="0" width="117" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VoucherNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="303" y="0" width="79" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CommissionReceiverCode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="386" y="0" width="157" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CommissionReceiverName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="712" y="0" width="90" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BalanceAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="15">
+			<textField>
+				<reportElement x="668" y="0" width="77" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="745" y="0" width="56" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="20">
+			<textField pattern="#,##0.00">
+				<reportElement x="691" y="4" width="110" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GrantTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="605" y="4" width="86" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Balance:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="691" y="1" width="110" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="survey_print_out" language="groovy" pageWidth="612" pageHeight="396" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="312"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmBranchTelp" class="java.lang.String"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmBranchAddress" class="java.lang.String"/>
+	<parameter name="prmCode" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+
+                 sal_survey.Code,
+                 sal_survey.BranchCode,
+                 mst_branch.Name AS BranchName,
+                 sal_survey.CompanyCode,
+                 mst_company.Name AS CompanyName,
+                 sal_survey.TransactionDate,
+                 sal_survey.FormNo,
+                 sal_survey.SurveyStatusCode,
+                 sal_survey.RequestDate,
+                 sal_survey.PreSalesOrderNo,
+                 sal_survey.EmployeeCode,
+                 mst_employee.Name AS EmployeeName,
+                 sal_survey.SurveyDate,
+                 sal_sales_order.CustomerNo,
+                 sal_survey.PCCustomerCode AS CustomerCode,
+                 mst_customer.Name AS CustomerName,
+                 mst_customer.`Address` AS CustomerAddress,
+                 sal_survey.PCPic1,
+                 sal_survey.PCPhonePic1,
+                 sal_survey.PCEmailPic1,
+                 sal_survey.PCPic2,
+                 sal_survey.PCPhonePic2,
+                 sal_survey.PCEmailPic2,
+                 sal_survey.Remark,
+                 CASE WHEN sal_survey.ApprovalStatus='A' THEN
+                 'Approved'
+                 WHEN sal_survey.ApprovalStatus='R' THEN
+                 'Reject'
+                 ELSE
+                 'Pending'
+                 END AS ApprovalStatus,
+                 sal_survey.CoveredStatus,
+                 sal_survey.ApprovalDate,
+                 sal_survey.ApprovalBy
+                 FROM sal_survey
+                 INNER JOIN mst_branch ON sal_survey.BranchCode=mst_branch.Code
+                 INNER JOIN mst_company ON sal_survey.CompanyCode=mst_company.Code
+                 INNER JOIN sal_sales_order ON sal_survey.PreSalesOrderNo=sal_sales_order.code
+                 INNER JOIN mst_survey_status ON sal_survey.SurveyStatusCode=mst_survey_status.code
+                 INNER JOIN mst_employee ON sal_survey.EmployeeCode=mst_employee.Code
+                 INNER JOIN mst_customer ON sal_survey.PCCustomerCode=mst_customer.Code
+                 WHERE sal_survey.Code= '$P!{prmCode}'
+                 ORDER BY sal_survey.TransactionDate DESC]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="BranchCode" class="java.lang.String"/>
+	<field name="BranchName" class="java.lang.String"/>
+	<field name="CompanyCode" class="java.lang.String"/>
+	<field name="CompanyName" class="java.lang.String"/>
+	<field name="FormNo" class="java.lang.String"/>
+	<field name="TransactionDate" class="java.util.Date"/>
+	<field name="SurveyDate" class="java.util.Date"/>
+	<field name="CustomerNo" class="java.lang.String"/>
+	<field name="CustomerCode" class="java.lang.String"/>
+	<field name="CustomerName" class="java.lang.String"/>
+	<field name="CustomerAddress" class="java.lang.String"/>
+	<field name="PCPic1" class="java.lang.String"/>
+	<field name="PCPhonePic1" class="java.lang.String"/>
+	<field name="Remark" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="356" splitType="Stretch">
+			<rectangle>
+				<reportElement x="185" y="283" width="194" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="283" width="177" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="246" y="47" width="316" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="246" y="29" width="316" height="18"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="29" width="238" height="18"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="8" y="-1" width="214" height="20"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MAXINDO SURVEY FORM]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="356" y="3" width="205" height="18"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="358" y="5" width="61" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[SURVEY NO :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="29" width="82" height="18"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Tanggal Survei]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="185" y="303" width="192" height="51"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="47" width="238" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="375" y="303" width="187" height="51"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="8" y="283" width="177" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[SURVEYOR]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="8" y="67" width="554" height="42"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="375" y="283" width="187" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="171" width="554" height="112"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="11" y="67" width="81" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Alamat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="249" y="30" width="92" height="17"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Nama Perusahaan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="341" y="49" width="13" height="18"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="29" width="13" height="18"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="11" y="47" width="81" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Contact Person ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="173" width="13" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="8" y="303" width="177" height="51"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="8" y="109" width="554" height="42"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="185" y="283" width="190" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[CUSTOMER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="173" width="72" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[HASIL SURVEY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="47" width="13" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="67" width="13" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="110" width="13" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="283" width="185" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[SUPERVISOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="110" width="72" height="42"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[KETERANGAN PERMINTAAN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="249" y="49" width="92" height="18"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Telephone ]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="417" y="6" width="144" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Code}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="356" y="30" width="206" height="17"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="107" y="29" width="139" height="18"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SurveyDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="107" y="47" width="139" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCPic1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="107" y="67" width="454" height="42"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerAddress}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="356" y="49" width="206" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PCPhonePic1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="107" y="173" width="454" height="110"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+					<paragraph leftIndent="3" rightIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Remark}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="341" y="30" width="13" height="19"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="8" y="151" width="554" height="20"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="151" width="72" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Form No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="152" width="12" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="107" y="152" width="454" height="20"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FormNo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cek_document_payment_date" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="10" bottomMargin="20">
+	<property name="ireport.zoom" value="1.1269722013523664"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmFirstDate" class="java.lang.String"/>
+	<parameter name="prmLastDate" class="java.lang.String"/>
+	<parameter name="prmDateViewFrom" class="java.lang.String"/>
+	<parameter name="prmDateViewTo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT union_data.*
+        FROM(
+            SELECT
+                'BBK' AS DocType,
+                fin_bank_payment.Code AS PaymentNo,
+                fin_bank_payment.TransactionDate AS PaymentDate,
+                fin_bank_payment_detail.DocumentNo,
+                data_document.TransactionDate AS DocumentDate,
+                fin_bank_payment.TotalTransactionAmount
+            FROM fin_bank_payment
+            INNER JOIN fin_bank_payment_detail ON fin_bank_payment.Code=fin_bank_payment_detail.HeaderCode
+            INNER JOIN(
+                SELECT fin_fee_receiver_credit_note.Code,fin_fee_receiver_credit_note.TransactionDate FROM fin_fee_receiver_credit_note
+                UNION ALL
+                SELECT fin_fee_receiver_debit_note.Code,fin_fee_receiver_debit_note.TransactionDate FROM fin_fee_receiver_debit_note
+                UNION ALL
+                SELECT fin_invoice_item.Code,fin_invoice_item.TransactionDate FROM fin_invoice_item
+                UNION ALL
+                SELECT fin_supplier_invoice.Code,fin_supplier_invoice.TransactionDate FROM fin_supplier_invoice
+                UNION ALL
+                SELECT pur_supplier_credit_note.Code,pur_supplier_credit_note.TransactionDate FROM pur_supplier_credit_note
+                UNION ALL
+                SELECT pur_supplier_debit_note.Code,pur_supplier_debit_note.TransactionDate FROM pur_supplier_debit_note
+                UNION ALL
+                SELECT sal_customer_credit_note.Code,sal_customer_credit_note.TransactionDate FROM sal_customer_credit_note
+                UNION ALL
+                SELECT sal_customer_debit_note.Code,sal_customer_debit_note.TransactionDate FROM sal_customer_debit_note
+                UNION ALL
+                SELECT sal_invoice.InvoiceNo,sal_invoice.TransactionDate FROM sal_invoice WHERE sal_invoice.PostingStatus=1
+            )AS data_document ON fin_bank_payment_detail.DocumentNo=data_document.Code
+            WHERE DATE(fin_bank_payment.TransactionDate) BETWEEN DATE($P{prmFirstDate}) AND DATE($P{prmLastDate})
+            AND DATE(fin_bank_payment.TransactionDate) < DATE(data_document.TransactionDate)
+
+            UNION ALL
+
+            SELECT
+                'BKK' AS DocType,
+                fin_cash_payment.Code AS PaymentNo,
+                fin_cash_payment.TransactionDate AS PaymentDate,
+                fin_cash_payment_detail.DocumentNo,
+                data_document.TransactionDate AS DocumentDate,
+                fin_cash_payment.TotalTransactionAmount
+            FROM fin_cash_payment
+            INNER JOIN fin_cash_payment_detail ON fin_cash_payment.Code=fin_cash_payment_detail.HeaderCode
+            INNER JOIN(
+                SELECT fin_fee_receiver_credit_note.Code,fin_fee_receiver_credit_note.TransactionDate FROM fin_fee_receiver_credit_note
+                UNION ALL
+                SELECT fin_fee_receiver_debit_note.Code,fin_fee_receiver_debit_note.TransactionDate FROM fin_fee_receiver_debit_note
+                UNION ALL
+                SELECT fin_invoice_item.Code,fin_invoice_item.TransactionDate FROM fin_invoice_item
+                UNION ALL
+                SELECT fin_supplier_invoice.Code,fin_supplier_invoice.TransactionDate FROM fin_supplier_invoice
+                UNION ALL
+                SELECT pur_supplier_credit_note.Code,pur_supplier_credit_note.TransactionDate FROM pur_supplier_credit_note
+                UNION ALL
+                SELECT pur_supplier_debit_note.Code,pur_supplier_debit_note.TransactionDate FROM pur_supplier_debit_note
+                UNION ALL
+                SELECT sal_customer_credit_note.Code,sal_customer_credit_note.TransactionDate FROM sal_customer_credit_note
+                UNION ALL
+                SELECT sal_customer_debit_note.Code,sal_customer_debit_note.TransactionDate FROM sal_customer_debit_note
+                UNION ALL
+                SELECT sal_invoice.InvoiceNo,sal_invoice.TransactionDate FROM sal_invoice WHERE sal_invoice.PostingStatus=1
+            )AS data_document ON fin_cash_payment_detail.DocumentNo=data_document.Code
+            WHERE DATE(fin_cash_payment.TransactionDate) BETWEEN DATE($P{prmFirstDate}) AND DATE($P{prmLastDate})
+            AND DATE(fin_cash_payment.TransactionDate) < DATE(data_document.TransactionDate)
+
+            UNION ALL
+
+            SELECT
+                'BBM' AS DocType,
+                fin_bank_received.Code AS PaymentNo,
+                fin_bank_received.TransactionDate AS PaymentDate,
+                fin_bank_received_detail.DocumentNo,
+                data_document.TransactionDate AS DocumentDate,
+                fin_bank_received.TotalTransactionAmount
+            FROM fin_bank_received
+            INNER JOIN fin_bank_received_detail ON fin_bank_received.Code=fin_bank_received_detail.HeaderCode
+            INNER JOIN(
+                SELECT fin_fee_receiver_credit_note.Code,fin_fee_receiver_credit_note.TransactionDate FROM fin_fee_receiver_credit_note
+                UNION ALL
+                SELECT fin_fee_receiver_debit_note.Code,fin_fee_receiver_debit_note.TransactionDate FROM fin_fee_receiver_debit_note
+                UNION ALL
+                SELECT fin_invoice_item.Code,fin_invoice_item.TransactionDate FROM fin_invoice_item
+                UNION ALL
+                SELECT fin_supplier_invoice.Code,fin_supplier_invoice.TransactionDate FROM fin_supplier_invoice
+                UNION ALL
+                SELECT pur_supplier_credit_note.Code,pur_supplier_credit_note.TransactionDate FROM pur_supplier_credit_note
+                UNION ALL
+                SELECT pur_supplier_debit_note.Code,pur_supplier_debit_note.TransactionDate FROM pur_supplier_debit_note
+                UNION ALL
+                SELECT sal_customer_credit_note.Code,sal_customer_credit_note.TransactionDate FROM sal_customer_credit_note
+                UNION ALL
+                SELECT sal_customer_debit_note.Code,sal_customer_debit_note.TransactionDate FROM sal_customer_debit_note
+                UNION ALL
+                SELECT sal_invoice.InvoiceNo,sal_invoice.TransactionDate FROM sal_invoice WHERE sal_invoice.PostingStatus=1
+            )AS data_document ON fin_bank_received_detail.DocumentNo=data_document.Code
+            WHERE DATE(fin_bank_received.TransactionDate) BETWEEN DATE($P{prmFirstDate}) AND DATE($P{prmLastDate})
+            AND DATE(fin_bank_received.TransactionDate) < DATE(data_document.TransactionDate)
+
+            UNION ALL
+
+            SELECT
+                'BKM' AS DocType,
+                fin_cash_received.Code AS PaymentNo,
+                fin_cash_received.TransactionDate AS PaymentDate,
+                fin_cash_received_detail.DocumentNo,
+                data_document.TransactionDate AS DocumentDate,
+                fin_cash_received.TotalTransactionAmount
+            FROM fin_cash_received
+            INNER JOIN fin_cash_received_detail ON fin_cash_received.Code=fin_cash_received_detail.HeaderCode
+            INNER JOIN(
+                SELECT fin_fee_receiver_credit_note.Code,fin_fee_receiver_credit_note.TransactionDate FROM fin_fee_receiver_credit_note
+                UNION ALL
+                SELECT fin_fee_receiver_debit_note.Code,fin_fee_receiver_debit_note.TransactionDate FROM fin_fee_receiver_debit_note
+                UNION ALL
+                SELECT fin_invoice_item.Code,fin_invoice_item.TransactionDate FROM fin_invoice_item
+                UNION ALL
+                SELECT fin_supplier_invoice.Code,fin_supplier_invoice.TransactionDate FROM fin_supplier_invoice
+                UNION ALL
+                SELECT pur_supplier_credit_note.Code,pur_supplier_credit_note.TransactionDate FROM pur_supplier_credit_note
+                UNION ALL
+                SELECT pur_supplier_debit_note.Code,pur_supplier_debit_note.TransactionDate FROM pur_supplier_debit_note
+                UNION ALL
+                SELECT sal_customer_credit_note.Code,sal_customer_credit_note.TransactionDate FROM sal_customer_credit_note
+                UNION ALL
+                SELECT sal_customer_debit_note.Code,sal_customer_debit_note.TransactionDate FROM sal_customer_debit_note
+                UNION ALL
+                SELECT sal_invoice.InvoiceNo,sal_invoice.TransactionDate FROM sal_invoice WHERE sal_invoice.PostingStatus=1
+            )AS data_document ON fin_cash_received_detail.DocumentNo=data_document.Code
+            WHERE DATE(fin_cash_received.TransactionDate) BETWEEN DATE($P{prmFirstDate}) AND DATE($P{prmLastDate})
+            AND DATE(fin_cash_received.TransactionDate) < DATE(data_document.TransactionDate)
+
+            UNION ALL
+
+            SELECT
+                'GJM' AS DocType,
+                fin_general_journal.Code AS PaymentNo,
+                fin_general_journal.TransactionDate AS PaymentDate,
+                fin_general_journal_detail.DocumentNo,
+                data_document.TransactionDate AS DocumentDate,
+                fin_general_journal.TotalTransactionAmount
+            FROM fin_general_journal
+            INNER JOIN fin_general_journal_detail ON fin_general_journal.Code=fin_general_journal_detail.HeaderCode
+            INNER JOIN(
+                SELECT fin_fee_receiver_credit_note.Code,fin_fee_receiver_credit_note.TransactionDate FROM fin_fee_receiver_credit_note
+                UNION ALL
+                SELECT fin_fee_receiver_debit_note.Code,fin_fee_receiver_debit_note.TransactionDate FROM fin_fee_receiver_debit_note
+                UNION ALL
+                SELECT fin_invoice_item.Code,fin_invoice_item.TransactionDate FROM fin_invoice_item
+                UNION ALL
+                SELECT fin_supplier_invoice.Code,fin_supplier_invoice.TransactionDate FROM fin_supplier_invoice
+                UNION ALL
+                SELECT pur_supplier_credit_note.Code,pur_supplier_credit_note.TransactionDate FROM pur_supplier_credit_note
+                UNION ALL
+                SELECT pur_supplier_debit_note.Code,pur_supplier_debit_note.TransactionDate FROM pur_supplier_debit_note
+                UNION ALL
+                SELECT sal_customer_credit_note.Code,sal_customer_credit_note.TransactionDate FROM sal_customer_credit_note
+                UNION ALL
+                SELECT sal_customer_debit_note.Code,sal_customer_debit_note.TransactionDate FROM sal_customer_debit_note
+                UNION ALL
+                SELECT sal_invoice.InvoiceNo,sal_invoice.TransactionDate FROM sal_invoice WHERE sal_invoice.PostingStatus=1
+            )AS data_document ON fin_general_journal_detail.DocumentNo=data_document.Code
+            WHERE DATE(fin_general_journal.TransactionDate) BETWEEN DATE($P{prmFirstDate}) AND DATE($P{prmLastDate})
+            AND DATE(fin_general_journal.TransactionDate) < DATE(data_document.TransactionDate)
+        )AS union_data ORDER BY union_data.PaymentNo
+]]>
+	</queryString>
+	<field name="PaymentNo" class="java.lang.String"/>
+	<field name="PaymentDate" class="java.util.Date"/>
+	<field name="DocumentNo" class="java.lang.String"/>
+	<field name="DocumentDate" class="java.util.Date"/>
+	<field name="TotalTransactionAmount" class="java.math.BigDecimal"/>
+	<variable name="grantTotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TotalTransactionAmount}]]></variableExpression>
+	</variable>
+	<variable name="no" class="java.lang.Integer" resetType="None" incrementType="Report" calculation="Count">
+		<variableExpression><![CDATA[$V{no}.intValue()]]></variableExpression>
+	</variable>
+	<variable name="firstDate" class="java.lang.String">
+		<variableExpression><![CDATA[$P{prmFirstDate}]]></variableExpression>
+	</variable>
+	<variable name="lastDate" class="java.util.Date">
+		<variableExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").parse($P{prmLastDate})]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="39" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORT CEK DOCUMENT DATE]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="18" width="555" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Periode : "+ $P{prmDateViewFrom}+" to "+ $P{prmDateViewTo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="18" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="25" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[  No]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="17" width="555" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="330" y="1" width="112" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="2" width="78" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="188" y="2" width="140" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="445" y="2" width="110" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="2" width="80" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document Date]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="104" y="1" width="80" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DocumentDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="-584" y="-9" width="22" height="15"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Tahoma"/>
+					<paragraph firstLineIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="0" width="112" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DocumentNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="25" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{no}.intValue()+1]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="26" y="1" width="78" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PaymentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="188" y="1" width="140" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PaymentNo}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="445" y="0" width="110" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TotalTransactionAmount}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="16">
+			<textField>
+				<reportElement x="200" y="0" width="77" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="277" y="0" width="56" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="23">
+			<textField pattern="#,##0.00">
+				<reportElement x="445" y="4" width="110" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{grantTotal}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="359" y="4" width="80" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="445" y="1" width="110" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</summary>
+	<noData>
+		<band height="33">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="33" forecolor="#000000" backcolor="#F5FFFA"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Data]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

@@ -1,0 +1,111 @@
+RFQ (Request for Quotation)
+v 1. No RFQ = 0001/RFQ/2019
+   Tender No : Input sendiri Mandatory
+v 2. Tanggal Penerimaan RFQ = Register Date Mandatory
+v 3. Review Dokumen (Status nya sudah sampai mana, contoh : Review atau Belum) Mandatory
+v 4. Pre Bid Meeting (Tanggal) Boleh Tidak Diisi
+v 5. Tanggal kirim ke Pabrik (Tanggal) Mandatory
+v 6. Persiapan Dokumen yang akan di submit ke Customer (Tanggal) Mandatory
+v 7. Tanggal Submit Ke Customer (Tanggal) = closing date Mandatory
+v 8. Scope Of Supply, isinya remark Mandatory
+v 9. Module RFQ ini boleh diupdate asal belum ada approval
+v 10. 1 RFQ bisa menjadi bbrp Quotation
+11. Selama RFQ Belum dilakukan Approval, maka Dokumen bisa dirubah
+
+Tambah Module RFQ Approval 
+v 1. Merubah Status RFQ menjadi Approved / Decline RFQ
+v 2. ditambah inputan Reason dan Remark
+v 3. Bisa di Approval kalau sudah terisi semua kecuali Pre Bid Meeting boleh kosong
+
+Quotation
+v 1. Quotation di Approve dulu, baru bisa ditarik ke Purchase Order dan Sales Order
+v 2. 1 Quotation bisa menjadi bbrp Customer Purchase Order
+v 3. Apabila mau revisi, harus dibuka approval nya dulu, syarat nya belum jadi Customer Purchase Order
+v 4. Harus Pilih No RFQ, 1 Quotation pilih 1 RFQ
+v 5. Bisa Pilih RFQ no untuk Reserve No Quotation, tapi Item nyaa kosong dulu
+v 6. Quotation bisa pilih File untuk Import dari Excel
+v 7. Apabila sudah di revisi, maka File Quotation yang sudah direvisi tidak berlaku lagi
+v 8. di Quotation belum menggunakan Item Code
+
+Tambah module Quotation Approval
+v 1. Waktu Approval, bisa pilih Item yang di Approved saja menggunakan Check List
+v 2. Waktu Approval, check ke Master Item, bila sudah ada, maka skip, kalau belum ada, Create master Item Otomatis
+v 3. tidak bisa di UnApproved, bila sudah jadi Customer Purchase order
+
+Customer Purchase Order
+v 1. Tambah kolom Sort No Manual (sesuai dengan Customer) untuk no Urut Item sesuai urutan PO Customer
+v 2. 1 PO bisa dari bbrp Quotation ==> OK
+v 3. Quotation yang bisa dipiih adalah Quotation yang sudah di Approved
+v 4. ada input Customer PO No manual dari Customer (Harus Unik per Customer)
+v 5. Inputan Detail dii Grid Boleh Kosong untuk Kolom nya
+v 6. Quotation yang ditarik bisa lebih dari 1 kali untuk PO yang berbeda
+v 7. Project harus sama untuk Pilihan Quotation yang akan dipilih
+v 8. Tambah Radio Button Partial Shipment Status (Yes / No), gunanya untuk informasi apakah boleh kirim partial dan langsung ditagih
+??? 9 Case Perubahan, apa yang harus dilakukan ???
+  - Menambah Quantity
+  - Mengurangi Quantity
+  - Rubah Spec / Item Code
+  - Rubah Harga
+ 
+Buat Module Update Customer Purchase order terpisah, artinya PO itu sudah tidak ada hubungan dengan Quotation lagi
+
+Customer Sales Order
+1. Tambah kolom Sort No Manual (sesuai dengan Customer)
+2. Inputan Detail di Grid Tidak Boleh Kosong untuk Kolom nya
+3. Digital Signature
+4. Bila Purchase Order Customer Dirubah, maka SO Nya akan berubah semua
+5 Case Perubahan, apa yang harus dilakukan ???
+  - Tambah Quantity
+  - Kurang Quantity
+  - Rubah Spec / Item Code
+  - Rubah Harga
+  
+Untuk SO Master, 
+- Hanya untuk ke SPK Produksi, yang nantinya akan jadi stok barang Jadi (Finish Goods)
+- Tidak bisa menjadi Tagihan
+- Tidak Boleh merubah Spec
+
+Untuk SO Release, 
+- akan ambil stoknya dari yang sudah di produksi, 
+- dan tidak bisa menjadi SPK Produksi,
+- akan menjadi tagihan	
+
+LAD List Applicable Document
+v - Digital Signature
+v - Upload barengan dengan Save New / Module Baru ==> diusahakan untuk Barengan antara New dengan Upload
+
+
+Tambah Master Division
+- Buat Table, Code dan name
+- Ini dipakai untuk Jenis Report yang bersangkutan masuk ke Department dan division mana
+- Setiing di Pengaturan
+
+Master Departemen 
+- Anak dari Divisi
+- Tambah kolom inputan Division, lookup ke master division
+
+Report Progress Tender
+- Tampilkan semua dokumen RFQ / Tender, yang sudah ada Closing Date nya
+
+Open Issue :
+------------
+- Forecast Harga jual bagaimana ??
+- Quotatio, Purchase Order, Sales Order ==> Shop To nya bisa lebih dari 1
+
+SO Normal pertama Mengacu ke Customer PO
+- SO Revision Mengacu SO Normal
+- Untuk Penagihan Invoice Final mengacu ke PO Normal
+- 
+
+Buat Modul AR Assignment ==> Masukin Conntra Bon
+Module Profrorma Invoice dibuat setelah Module Invoice Real nya jalan lancar
+
+Contract review, Sales Order, LAD punya Foot Note
+AN ELECTRONIC COPY IS AVALIABLE ON SERVER								
+ONCE PRINTED, DOCUMENT IS UNCONTROLLED & USER HAVE RESPONSIBILITY TO MAKE SURE USE THE LATEST REVISION OF THE DOCUMENT								
+
+RFQ Approval
+Quotation Approval
+Purchase Order
+Sales Order
+Master SO dan Release

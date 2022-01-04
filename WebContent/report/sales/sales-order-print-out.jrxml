@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sales_order_print_out" language="groovy" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true">
+	<property name="ireport.zoom" value="1.4641000000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmBranchTelp" class="java.lang.String"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmBranchAddress" class="java.lang.String"/>
+	<parameter name="prmCode" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+                 sal_sales_order.Code,
+                 sal_sales_order.CustomerNo,
+                 sal_sales_order.Branchcode,
+                 sal_sales_order.SODAliasName,
+                 sal_sales_order.TransactionDate,
+                 sal_sales_order.CompanyCode,
+                 mst_company.Name AS CompanyName,
+                 sal_sales_order.CustomerCategoryCode,
+                 mst_customer_category.Name AS CustomerCategoryName,
+                 sal_sales_order.EmployeeSPVCode,
+                 mst_employee_spv.name AS EmployeeSPVName,
+                 sal_sales_order.EmployeeMarketingCode,
+                 mst_employee_marketing.name AS EmployeeMarketingName,
+                 sal_sales_order.StartDate,
+                 CASE
+                 WHEN sal_sales_order.InvoiceStatus=TRUE THEN 'Regular'
+                 ELSE 'InActive'
+                 END AS InvoiceStatus,
+                 sal_sales_order.HardwareInstallationStatus,
+                 sal_sales_order.PaymentTermCode,
+                 mst_payment_term.Name AS PaymentTermName,
+                 mst_payment_term.Days AS PaymentTermDays,
+                 sal_sales_order.CurrencyCode,
+                 sal_sales_order.CustomerLevelCode,
+                 mst_customer_level.Name AS CustomerLevelName,
+                 sal_sales_order.NetworkTypeCode,
+                 mst_network_type.Name AS NetworkTypeName,
+                 sal_sales_order.BankAccountCode,
+                 mst_bank_account.Name AS BankAccountName,
+                 mst_bank_account.ACNo AS BankAccountACNo,
+                 mst_bank_account.ACName AS BankAccountACName,
+                 mst_bank_account.BankName AS BankAccountBankName,
+                 mst_bank_account.BankBranch AS BankAccountBankBranch,
+                 mst_employee_marketing.code AS MarketingCode,
+                 mst_employee_marketing.name AS MarketingName,
+                 sal_sales_order.CustomerCode,
+                 mst_customer.Name AS CustomerName,
+                 mst_customer.Address AS CustomerAddress,
+                 mst_customer.CityCode AS CustomerCityCode,
+                 mst_city_cust.Name AS CustomerCityName,
+                 mst_customer.Phone1 AS CustomerPhone1,
+                 mst_customer.Phone2 AS CustomerPhone2,
+                 mst_customer.Fax AS CustomerFax,
+                 mst_customer.Email AS CustomerEmail,
+                 mst_customer.contactperson AS CustomerContactPerson,
+                 sal_sales_order.Pic1,
+                 sal_sales_order.PhonePic1,
+                 sal_sales_order.EmailPic1,
+                 sal_sales_order.Pic2,
+                 sal_sales_order.PhonePic2,
+                 sal_sales_order.EmailPic2,
+                 sal_sales_order.Pic3,
+                 sal_sales_order.PhonePic3,
+                 sal_sales_order.EmailPic3,
+                 sal_sales_order.Pic4,
+                 sal_sales_order.PhonePic4,
+                 sal_sales_order.EmailPic4,
+                 sal_sales_order.BandwidthIIX,
+                 sal_sales_order.BandwidthInt,
+                 sal_sales_order.TotalBandwidth,
+                 sal_sales_order.IPPublicClient1,
+                 sal_sales_order.IPPublicClient2,
+                 sal_sales_order.CoordinateCL,
+                 sal_sales_order.BACustomerName,
+                 sal_sales_order.BACustomerNPWP,
+                 sal_sales_order.BACustomerAddress,
+                 sal_sales_order.BACustomerCityCode,
+                 IFNULL(mst_city_ba.Name,'') AS BACustomerCityName,
+                 sal_sales_order.BACustomerPhone1,
+                 sal_sales_order.BACustomerPhone2,
+                 sal_sales_order.BACustomerFax,
+                 sal_sales_order.BACustomerEmail,
+                 sal_sales_order.BACustomerPic1,
+                 sal_sales_order.BACustomerPhonePic1,
+                 sal_sales_order.BACustomerEmailPic1,
+                 sal_sales_order.BACustomerPic2,
+                 sal_sales_order.BACustomerPhonePic2,
+                 sal_sales_order.BACustomerEmailPic2,
+                 sal_sales_order.SACustomerName,
+                 sal_sales_order.SACustomerAddress,
+                 sal_sales_order.SACustomerCityCode,
+                 IFNULL(mst_city_sa.Name,'') AS SACustomerCityName,
+                 sal_sales_order.SACustomerPhone1,
+                 sal_sales_order.SACustomerPhone2,
+                 sal_sales_order.SACustomerFax,
+                 sal_sales_order.SACustomerEmail,
+                 sal_sales_order.SACustomerPic1,
+                 sal_sales_order.SACustomerPhonePic1,
+                 sal_sales_order.SACustomerEmailPic1,
+                 sal_sales_order.SACustomerPic2,
+                 sal_sales_order.SACustomerPhonePic2,
+                 sal_sales_order.SACustomerEmailPic2,
+                 sal_sales_order.RefNo,
+                 sal_sales_order.Remark,
+                 sal_sales_order.TotalTransactionAmount,
+                 sal_sales_order.DiscountPercent,
+                 sal_sales_order.DiscountAmount,
+                 sal_sales_order.DiscountAccountCode,
+                 mst_chart_of_account_disc.Name AS DiscountAccountName,
+                 sal_sales_order.VatPercent,
+                 sal_sales_order.VatAmount,
+                 sal_sales_order.OtherFeeAmount,
+                 sal_sales_order.OtherFeeAccountCode,
+                 mst_chart_of_account_other.Name AS OtherFeeAccountName,
+                 sal_sales_order.CommissionType,
+                 sal_sales_order.CommissionAmount,
+                 sal_sales_order.GrandTotalAmount,
+                 sal_sales_order.Approval1Status,
+                 sal_sales_order.Approval1Date,
+                 sal_sales_order.Approval1By,
+                 sal_sales_order.Approval2Status,
+                 sal_sales_order.Approval2Date,
+                 sal_sales_order.Approval2By,
+                 sal_sales_order.ClosedStatus,
+                 sal_sales_order.ClosedDate,
+                 sal_sales_order.ClosedBy,
+                 sal_sales_order.CreatedBy,
+                 sal_sales_order.CreatedDate,
+                 sal_sales_order_detail.`Remark` AS RemarkDetail
+                 FROM sal_sales_order
+                 INNER JOIN sal_sales_order_detail ON sal_sales_order_detail.`Headercode` = sal_sales_order.`Code`
+                 INNER JOIN mst_branch ON sal_sales_order.Branchcode=mst_branch.Code
+                 INNER JOIN mst_company ON sal_sales_order.CompanyCode=mst_company.Code
+                 INNER JOIN mst_employee mst_employee_spv ON sal_sales_order.EmployeeSPVCode=mst_employee_spv.Code
+                 INNER JOIN mst_employee mst_employee_marketing ON sal_sales_order.EmployeeMarketingCode=mst_employee_marketing.Code
+                 INNER JOIN mst_customer_category ON sal_sales_order.CustomerCategoryCode=mst_customer_category.Code
+                 INNER JOIN mst_payment_term ON sal_sales_order.PaymentTermCode=mst_payment_term.Code
+                 INNER JOIN mst_currency ON sal_sales_order.CurrencyCode=mst_currency.Code
+                 INNER JOIN mst_customer_level ON sal_sales_order.CustomerLevelCode=mst_customer_level.Code
+                 INNER JOIN mst_network_type ON sal_sales_order.NetworkTypeCode=mst_network_type.Code
+                 LEFT JOIN mst_bank_account ON sal_sales_order.BankAccountCode=mst_bank_account.Code
+                 INNER JOIN mst_customer ON sal_sales_order.CustomerCode=mst_customer.Code
+                 INNER JOIN mst_city mst_city_cust ON mst_customer.CityCode=mst_city_cust.Code
+                 LEFT JOIN mst_city mst_city_ba ON sal_sales_order.BACustomerCityCode=mst_city_ba.Code
+                 LEFT JOIN mst_city mst_city_sa ON sal_sales_order.SACustomerCityCode=mst_city_sa.Code
+                 LEFT JOIN mst_chart_of_account mst_chart_of_account_disc ON sal_sales_order.DiscountAccountCode=mst_chart_of_account_disc.Code
+                 LEFT JOIN mst_chart_of_account mst_chart_of_account_other ON sal_sales_order.OtherFeeAccountCode=mst_chart_of_account_other.Code
+                 WHERE sal_sales_order.Code = '$P!{prmCode}'
+                 ORDER BY sal_sales_order.TransactionDate DESC]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="BranchCode" class="java.lang.String"/>
+	<field name="CompanyCode" class="java.lang.String"/>
+	<field name="CompanyName" class="java.lang.String"/>
+	<field name="CustomerName" class="java.lang.String"/>
+	<field name="CustomerCode" class="java.lang.String"/>
+	<field name="CustomerAddress" class="java.lang.String"/>
+	<field name="BACustomerAddress" class="java.lang.String"/>
+	<field name="CustomerCityName" class="java.lang.String"/>
+	<field name="CustomerPhone1" class="java.lang.String"/>
+	<field name="CustomerPhone2" class="java.lang.String"/>
+	<field name="CustomerLevelName" class="java.lang.String"/>
+	<field name="CustomerEmail" class="java.lang.String"/>
+	<field name="BandwidthIIX" class="java.math.BigDecimal"/>
+	<field name="BandwidthInt" class="java.math.BigDecimal"/>
+	<field name="TotalBandwidth" class="java.math.BigDecimal"/>
+	<field name="IPPublicClient1" class="java.lang.String"/>
+	<field name="IPPublicClient2" class="java.lang.String"/>
+	<field name="CoordinateCL" class="java.lang.String"/>
+	<field name="VatPercent" class="java.math.BigDecimal"/>
+	<field name="VatAmount" class="java.math.BigDecimal"/>
+	<field name="Remark" class="java.lang.String"/>
+	<field name="CustomerContactPerson" class="java.lang.String"/>
+	<field name="CustomerNo" class="java.lang.String"/>
+	<field name="SACustomerAddress" class="java.lang.String"/>
+	<field name="SACustomerCityName" class="java.lang.String"/>
+	<field name="BACustomerCityName" class="java.lang.String"/>
+	<field name="Pic1" class="java.lang.String"/>
+	<field name="EmailPic1" class="java.lang.String"/>
+	<field name="RemarkDetail" class="java.lang.String"/>
+	<field name="TotalTransactionAmount" class="java.math.BigDecimal"/>
+	<field name="MarketingName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="752" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="136" width="110" height="66"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="234" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="583" width="102" height="166"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="102" width="102" height="31"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="413" width="102" height="170"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="133" width="102" height="84"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="217" width="102" height="84"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="69" width="570" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="102" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="119" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="202" width="468" height="49"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="301" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="268" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="251" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="284" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="566" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="515" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="447" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="498" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="532" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="549" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="464" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="413" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="481" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="430" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="702" width="469" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="672" width="469" height="14"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="642" width="469" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="657" width="469" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="686" width="469" height="16"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="600" width="469" height="27"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="717" width="469" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="627" width="469" height="15"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="-1" y="734" width="469" height="15"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="314" y="32" width="27" height="17"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="9" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Telp :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="341" y="32" width="101" height="17"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchTelp}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="314" y="18" width="257" height="15"/>
+				<textElement>
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchAddress}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="157" y="49" width="336" height="20"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FORM AKTIVASI PELANGGAN / SALES ORDER]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="314" y="0" width="256" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="137" width="103" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Id Pelanggan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="414" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Finance :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="71" width="24" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[NO :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="399" width="152" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[BILLING]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="368" width="468" height="17"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="468" y="301" width="102" height="112"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="385" width="152" height="13"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[*diisi apabila client via reseller]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="335" width="468" height="17"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="301" width="99" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Contact Person]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="318" width="468" height="17"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="583" width="152" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SETTING AKTIVASI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="252" width="99" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Kota]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="352" width="468" height="17"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="5" y="320" width="99" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="268" width="99" height="17"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Telp rumah / kantor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="104" width="52" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[VALIDASI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="154" width="103" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Alamat Instalasi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="337" width="104" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[*)Rekanan / Vendor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="354" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Contact Person]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="371" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Phone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="222" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Support :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="104" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Kode Client]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="306" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Approval :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="285" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Handphone]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="202" width="103" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Alamat Invoice]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="87" width="172" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA CUSTOMER / PELANGGAN]]></text>
+			</staticText>
+			<line>
+				<reportElement x="109" y="202" width="1" height="183"/>
+			</line>
+			<staticText>
+				<reportElement x="4" y="415" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Paket MAXINDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="432" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[IIX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="447" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[IX]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="464" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="481" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[IP Public]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="500" width="106" height="13"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Type Pelanggan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="517" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Biaya Bulanan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="534" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Biaya Registrasi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="549" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Biaya Lain]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="566" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Mark Up]]></text>
+			</staticText>
+			<line>
+				<reportElement x="110" y="413" width="1" height="170"/>
+			</line>
+			<line>
+				<reportElement x="111" y="600" width="1" height="149"/>
+			</line>
+			<staticText>
+				<reportElement x="5" y="627" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Tanggal Aktivasi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="642" width="105" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Masa Trial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="657" width="103" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[IP AP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="687" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[IP CL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="719" width="107" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Lokasi POP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="734" width="107" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Keterangan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="589" width="50" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[SPV NOC :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="137" width="24" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Sales ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="137" width="26" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="600" width="103" height="21"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Tanggal Pasang]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="113" y="121" width="355" height="15"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="69" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="104" width="354" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerCode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="202" width="317" height="31"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BACustomerAddress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="252" width="268" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerCityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="268" width="116" height="17"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerPhone1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="285" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerPhone2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="430" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BandwidthIIX}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="447" width="115" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BandwidthInt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="466" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TotalBandwidth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="481" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IPPublicClient1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="112" y="498" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerLevelName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="733" width="116" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Remark}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="152" width="468" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="114" y="686" width="100" height="16"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CoordinateCL}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="109" y="102" width="1" height="50"/>
+			</line>
+			<staticText>
+				<reportElement x="481" y="284" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Bastian]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="392" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Johnson]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="532" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Tan Budi]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="687" width="40" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Tius]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="121" width="103" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[Nama Client]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="114" y="137" width="100" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CustomerNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="154" width="317" height="32"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SACustomerAddress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="187" width="354" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SACustomerCityName}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="110" y="186" width="358" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="114" y="235" width="354" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BACustomerCityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="302" width="115" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Pic1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="320" width="114" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EmailPic1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="113" y="415" width="355" height="14"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RemarkDetail}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="114" y="517" width="76" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TotalTransactionAmount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="190" y="517" width="106" height="15"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<text><![CDATA[+ PPN 10%]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="481" y="194" width="76" height="19"/>
+				<textElement>
+					<font fontName="Gill Sans MT" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MarketingName}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="110" y="234" width="358" height="1"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

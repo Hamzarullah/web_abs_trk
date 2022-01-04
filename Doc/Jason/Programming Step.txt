@@ -1,0 +1,39 @@
+Database
+- Berisi Kumpulan Table-Table
+- Contoh : 
+   mst_island : code, Name, countrycode
+   mst_country : code, Name
+
+---------------------------
+Config
+- Berisi Settingan Awal
+  Nama Server Database (Nama Komputer / IP Komputer)
+  Nama Database (mrp_pps / mrp_spaa)
+   
+SYS_MODULE
+berisi daftar modul yang ada di program
+
+SCR_Menu
+Berisi daftar menu yang ada di website termasuk foldernya
+berisi link ke pages / ui
+
+`scr_authorization`
+berisi autorisasi yang akan muncul di modul role authorization
+
+Model
+- Alias dari Table yang akan dibutuhkan untuk Module yang bersangkutan
+Master Island, butuh kolom : 
+Model Island : Code, Name, CountryCode
+
+DAO / Data Access Object = DAL / Data Access Layer
+- Berisi Query untuk database
+
+BLL / Business Logic Layer
+- Execute DAO
+
+Action
+- Berisi kapan BLL dijalankan
+
+UI = User Interface / Pages
+
+

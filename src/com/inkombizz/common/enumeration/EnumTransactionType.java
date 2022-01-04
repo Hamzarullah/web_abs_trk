@@ -1,0 +1,50 @@
+
+package com.inkombizz.common.enumeration;
+
+
+public class EnumTransactionType {
+    public enum ENUM_TransactionType {
+        OPENINGBALANCE,
+        CRV,
+        VDP,
+        PCO,
+        BOD,
+        PRQ,
+        POD,
+        GRN,
+        IOT,
+        IIN,
+        INV,
+        BKM,
+        BKK,
+        BBM,
+        BBK,
+        CDPBKM,
+        CDPBBM,
+        SDPBBK,
+        SDPBKK,
+        VDN,
+        VCN,
+        CCN,
+        CDN,
+        CDP,
+        SDP,
+        GJM,
+        GRR,
+        GRP,
+        FDN,
+        FCN,
+        WHM,
+        DLN,
+        RFQ,
+        Q,
+        IM,
+        REV,
+        LAD,
+        ADJIN,
+        ADJOUT,
+        WHTO,
+        WHTI,
+        CR
+    }
+}

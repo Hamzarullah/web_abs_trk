@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="supplier_print_out" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmBranchAddress" class="java.lang.String"/>
+	<parameter name="prmBranchTelp" class="java.lang.String"/>
+	<parameter name="prmActiveStatus" class="java.lang.String"/>
+	<parameter name="prmQueryStatus" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT mst_supplier.Code,
+       mst_supplier.Name,
+       mst_supplier.Address,
+       mst_supplier.ContactPerson,
+       mst_supplier.Email,
+       mst_supplier.Fax,
+       mst_supplier.Npwp,
+       mst_supplier.NpwpName,
+       mst_supplier.Phone1,
+       mst_country.name AS CountryName,
+       mst_supplier.PaymentTermCode,
+       mst_payment_term.name AS PaymentTermName
+       FROM mst_supplier
+       INNER JOIN mst_country ON mst_country.code = mst_supplier.CountryCode
+       INNER JOIN mst_payment_term ON mst_payment_term.code = mst_supplier.PaymentTermCode
+       $P!{prmQueryStatus} ORDER BY mst_supplier.Code]]>
+	</queryString>
+	<field name="Code" class="java.lang.String"/>
+	<field name="Name" class="java.lang.String"/>
+	<field name="Address" class="java.lang.String"/>
+	<field name="ContactPerson" class="java.lang.String"/>
+	<field name="Email" class="java.lang.String"/>
+	<field name="Fax" class="java.lang.String"/>
+	<field name="Npwp" class="java.lang.String"/>
+	<field name="NpwpName" class="java.lang.String"/>
+	<field name="Phone1" class="java.lang.String"/>
+	<field name="CountryName" class="java.lang.String"/>
+	<field name="PaymentTermCode" class="java.lang.String"/>
+	<field name="PaymentTermName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="24" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="118" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="56" width="802" height="25"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="14" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Master - Supplier]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="36" width="27" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Telp :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="3" y="21" width="335" height="15"/>
+				<textElement>
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchAddress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="1" width="335" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="34" y="36" width="226" height="20"/>
+				<textElement>
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchTelp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="698" y="9" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField evaluationTime="Report">
+				<reportElement x="779" y="24" width="20" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="760" y="24" width="19" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="742" y="24" width="18" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="698" y="24" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="742" y="9" width="59" height="15"/>
+				<textElement>
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="96" width="139" height="14"/>
+				<textElement>
+					<font fontName="Tahoma" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmActiveStatus}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="96" width="43" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Status :]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<staticText>
+				<reportElement x="32" y="6" width="87" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="121" y="6" width="119" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="243" y="6" width="137" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Address]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="384" y="6" width="104" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contact Person]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="6" width="69" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fax]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="1" width="801" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="565" y="6" width="71" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Phone1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="641" y="6" width="86" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Country]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="730" y="6" width="71" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Term]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="6" width="27" height="21"/>
+				<textElement>
+					<font fontName="Tahoma" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="30" width="801" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="29" splitType="Stretch">
+			<textField>
+				<reportElement x="32" y="3" width="89" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="121" y="3" width="117" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="243" y="3" width="137" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="384" y="3" width="104" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ContactPerson}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="3" width="69" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Fax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="565" y="3" width="71" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Phone1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="641" y="3" width="86" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CountryName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="730" y="3" width="71" height="20"/>
+				<textElement>
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PaymentTermName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="4" y="3" width="25" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Tahoma" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="26" width="801" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="19" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch"/>
+	</summary>
+</jasperReport>

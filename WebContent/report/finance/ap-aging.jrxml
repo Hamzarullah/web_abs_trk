@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ap_aging" language="groovy" pageWidth="935" pageHeight="609" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="907" leftMargin="14" rightMargin="14" topMargin="14" bottomMargin="14" isSummaryWithPageHeaderAndFooter="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="prmBranchName" class="java.lang.String"/>
+	<parameter name="prmDate" class="java.lang.String"/>
+	<parameter name="prmDateView" class="java.lang.String"/>
+	<parameter name="prmAging1" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{prmAging1}.intValue()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prmAging2" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{prmAging2}.intValue()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prmAging3" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{prmAging3}.intValue()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="prmAging4" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{prmAging4}.intValue()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+		qryAPAging.DocumentType,
+		qryAPAging.VoucherNo,
+		qryAPAging.RefNo,
+		qryAPAging.TransactionDate,
+		qryAPAging.DueDate,
+		qryAPAging.CurrencyCode,
+		qryAPAging.CurrencyName,
+		qryAPAging.ExchangeRate,
+		CONCAT(qryAPAging.SupplierCode,' - ',qryAPAging.SupplierName) AS concatSupp,
+		qryAPAging.SupplierCode,
+		qryAPAging.SupplierName,
+		qryAPAging.PaymentTermCode,
+		qryAPAging.paymentTermName,
+		qryAPAging.PaymentTermDays,
+		qryAPAging.Amount,
+		qryAPAging.AmountIDR,
+		qryAPAging.Days,
+		qryAPAging.AmountAging1,
+		qryAPAging.AmountAging2,
+		qryAPAging.AmountAging3,
+		qryAPAging.AmountAging4,
+		qryAPAging.AmountAging5
+	FROM(
+	SELECT
+		'VIN' AS DocumentType,
+		fin_supplier_invoice.code AS VoucherNo,
+		fin_supplier_invoice.refNo AS RefNo,
+		fin_supplier_invoice.TransactionDate AS TransactionDate,
+		CAST(DATE_ADD(fin_supplier_invoice.TransactionDate, INTERVAL mst_payment_term.Days DAY) AS DATETIME) AS DueDate,
+		fin_supplier_invoice.CurrencyCode,
+		mst_currency.Name AS CurrencyName,
+		fin_supplier_invoice.ExchangeRate,
+		pur_purchase_order.SupplierCode,
+		mst_supplier.Name AS SupplierName,
+		fin_supplier_invoice.PaymentTermCode,
+		mst_payment_term.Name AS PaymentTermName,
+		mst_payment_term.Days AS PaymentTermDays,
+		(fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0) AS Amount,
+		((fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0)) * fin_supplier_invoice.ExchangeRate AS AmountIDR,
+		DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) AS Days,
+		(IF(DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) <= $P{prmAging1}, (fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging1,
+		(IF(DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) BETWEEN $P{prmAging1}+1 AND $P{prmAging2},  (fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging2,
+		(IF(DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) BETWEEN $P{prmAging2}+1 AND $P{prmAging3},  (fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging3,
+		(IF(DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) BETWEEN $P{prmAging3}+1 AND $P{prmAging4},  (fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging4,
+		(IF(DATEDIFF($P{prmDate}, fin_supplier_invoice.TransactionDate) > $P{prmAging4},  (fin_supplier_invoice.grandtotalamount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging5
+	FROM fin_supplier_invoice
+		INNER JOIN pur_purchase_order ON pur_purchase_order.`Code`= fin_supplier_invoice.`PurchaseOrderNo`
+		INNER JOIN mst_supplier ON pur_purchase_order.SupplierCode = mst_supplier.Code
+		INNER JOIN mst_currency ON fin_supplier_invoice.CurrencyCode = mst_currency.Code
+		INNER JOIN mst_payment_term ON fin_supplier_invoice.PaymentTermCode = mst_payment_term.Code
+
+	LEFT  JOIN(
+				SELECT
+					qry2.VoucherNo,
+					qry2.TransactionDate,
+					qry2.DocumentNo,
+					SUM(qry2.Amount) AS Amount
+				FROM (
+					SELECT
+						IFNULL(fin_cash_received.code, '') AS VoucherNo,
+						IFNULL(fin_cash_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_cash_received_detail.TransactionStatus='Transaction', fin_cash_received_detail.Credit, 0)) AS Amount
+					FROM fin_cash_received
+						INNER JOIN fin_cash_received_detail ON fin_cash_received.code = fin_cash_received_detail.headerCode
+					WHERE
+						DATE(fin_cash_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_received.code, '') AS VoucherNo,
+						IFNULL(fin_bank_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_bank_received_detail.TransactionStatus='Transaction', fin_bank_received_detail.Credit, 0)) AS Amount
+					FROM fin_bank_received
+						INNER JOIN fin_bank_received_detail ON fin_bank_received.code = fin_bank_received_detail.headerCode
+					WHERE
+						DATE(fin_bank_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_cash_payment.code, '') AS VoucherNo,
+						IFNULL(fin_cash_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_cash_payment_detail.TransactionStatus='Transaction', fin_cash_payment_detail.Debit, 0)) AS Amount
+					FROM fin_cash_payment
+						INNER JOIN fin_cash_payment_detail ON fin_cash_payment.code = fin_cash_payment_detail.headerCode
+					WHERE
+						DATE(fin_cash_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_payment.code, '') AS VoucherNo,
+						IFNULL(fin_bank_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_bank_payment_detail.TransactionStatus='Transaction', fin_bank_payment_detail.Debit, 0)) AS Amount
+					FROM fin_bank_payment
+						INNER JOIN fin_bank_payment_detail ON fin_bank_payment.code = fin_bank_payment_detail.headerCode
+					WHERE
+						DATE(fin_bank_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_general_journal.code, '') AS VoucherNo,
+						IFNULL(fin_general_journal.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_general_journal_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_general_journal_detail.TransactionStatus='Transaction', fin_general_journal_detail.Debit, 0)) AS Amount
+					FROM fin_general_journal
+						INNER JOIN fin_general_journal_detail ON fin_general_journal.code = fin_general_journal_detail.headerCode
+					WHERE
+						DATE(fin_general_journal.TransactionDate) <= DATE($P{prmDate})
+						-- AND fin_general_journal_detail.headerCode NOT IN (SELECT fin_supplier_invoice.PaymentVoucherNo FROM fin_supplier_invoice WHERE fin_supplier_invoice.PaymentVoucherNo <> '')
+					GROUP BY fin_general_journal_detail.DocumentNo
+                UNION ALL
+					SELECT
+						IFNULL(fin_general_journal.code, '') AS VoucherNo,
+						IFNULL(fin_general_journal.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_general_journal_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_general_journal_detail.TransactionStatus='Transaction', fin_general_journal_detail.Credit, 0)) AS Amount
+					FROM fin_general_journal
+						INNER JOIN fin_general_journal_detail ON fin_general_journal.code = fin_general_journal_detail.headerCode
+					WHERE
+						DATE(fin_general_journal.TransactionDate) <= DATE($P{prmDate})
+						-- AND fin_general_journal_detail.headerCode NOT IN (SELECT fin_supplier_invoice.PaymentVoucherNo FROM fin_supplier_invoice WHERE fin_supplier_invoice.PaymentVoucherNo <> '')
+					GROUP BY fin_general_journal_detail.DocumentNo
+					) AS qry2
+					GROUP BY qry2.DocumentNo
+				) AS qry1 ON qry1.DocumentNo = fin_supplier_invoice.code
+	WHERE
+		DATE(fin_supplier_invoice.TransactionDate) <= DATE($P{prmDate})
+		-- AND fin_supplier_invoice.refNo <> ''
+		AND (DATE(fin_supplier_invoice.SettlementDate) >= DATE($P{prmDate}) OR fin_supplier_invoice.SettlementDate = '1900-01-01 00:00:00')
+
+	UNION ALL
+	SELECT
+		'SCN' AS DocumentType,
+		pur_supplier_credit_note.code AS VoucherNo,
+		pur_supplier_credit_note.refNo AS RefNo,
+		pur_supplier_credit_note.TransactionDate AS TransactionDate,
+		pur_supplier_credit_note.TransactionDate AS DueDate,
+		pur_supplier_credit_note.CurrencyCode,
+		mst_currency.Name AS CurrencyName,
+		pur_supplier_credit_note.ExchangeRate,
+		pur_supplier_credit_note.SupplierCode,
+		mst_supplier.Name AS SupplierName,
+		'' AS PaymentTermCode,
+		'' AS PaymentTermName,
+		0 AS PaymentTermDays,
+		(pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0) AS Amount,
+		((pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0)) * pur_supplier_credit_note.ExchangeRate AS AmountIDR,
+		DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) AS Days,
+		(IF(DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) <= $P{prmAging1}, (pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging1,
+		(IF(DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) BETWEEN $P{prmAging1} +1 AND $P{prmAging2},  (pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging2,
+		(IF(DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) BETWEEN $P{prmAging2} +1 AND $P{prmAging3},  (pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging3,
+		(IF(DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) BETWEEN $P{prmAging3} +1 AND $P{prmAging4},  (pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging4,
+		(IF(DATEDIFF($P{prmDate}, pur_supplier_credit_note.TransactionDate) > $P{prmAging4},  (pur_supplier_credit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging5
+	FROM pur_supplier_credit_note
+		INNER JOIN mst_currency ON pur_supplier_credit_note.CurrencyCode = mst_currency.Code
+		INNER JOIN mst_supplier ON pur_supplier_credit_note.SupplierCode = mst_supplier.Code
+		LEFT  JOIN(
+				SELECT
+					qry2.VoucherNo,
+					qry2.TransactionDate,
+					qry2.DocumentNo,
+					SUM(qry2.Amount) AS Amount
+				FROM (
+					SELECT
+						IFNULL(fin_cash_received.code, '') AS VoucherNo,
+						IFNULL(fin_cash_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_cash_received_detail.TransactionStatus='Transaction', fin_cash_received_detail.Credit, 0)) AS Amount
+					FROM fin_cash_received
+						INNER JOIN fin_cash_received_detail ON fin_cash_received.code = fin_cash_received_detail.headerCode
+					WHERE
+						DATE(fin_cash_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_received.code, '') AS VoucherNo,
+						IFNULL(fin_bank_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_bank_received_detail.TransactionStatus='Transaction', fin_bank_received_detail.Credit, 0)) AS Amount
+					FROM fin_bank_received
+						INNER JOIN fin_bank_received_detail ON fin_bank_received.code = fin_bank_received_detail.headerCode
+					WHERE
+						DATE(fin_bank_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_cash_payment.code, '') AS VoucherNo,
+						IFNULL(fin_cash_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_cash_payment_detail.TransactionStatus='Transaction', fin_cash_payment_detail.Debit, 0)) AS Amount
+					FROM fin_cash_payment
+						INNER JOIN fin_cash_payment_detail ON fin_cash_payment.code = fin_cash_payment_detail.headerCode
+					WHERE
+						DATE(fin_cash_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_payment.code, '') AS VoucherNo,
+						IFNULL(fin_bank_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_bank_payment_detail.TransactionStatus='Transaction', fin_bank_payment_detail.Debit, 0)) AS Amount
+					FROM fin_bank_payment
+						INNER JOIN fin_bank_payment_detail ON fin_bank_payment.code = fin_bank_payment_detail.headerCode
+					WHERE
+						DATE(fin_bank_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_general_journal.code, '') AS VoucherNo,
+						IFNULL(fin_general_journal.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_general_journal_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_general_journal_detail.TransactionStatus='Transaction', fin_general_journal_detail.Debit, 0)) AS Amount
+					FROM fin_general_journal
+						INNER JOIN fin_general_journal_detail ON fin_general_journal.code = fin_general_journal_detail.headerCode
+					WHERE
+						DATE(fin_general_journal.TransactionDate) <= DATE($P{prmDate})
+						-- AND fin_general_journal_detail.headerCode NOT IN (SELECT fin_supplier_invoice.PaymentVoucherNo FROM fin_supplier_invoice WHERE fin_supplier_invoice.PaymentVoucherNo <> '')
+					GROUP BY fin_general_journal_detail.DocumentNo
+                UNION ALL
+					SELECT
+						IFNULL(fin_general_journal.code, '') AS VoucherNo,
+						IFNULL(fin_general_journal.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_general_journal_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_general_journal_detail.TransactionStatus='Transaction', fin_general_journal_detail.Credit, 0)) AS Amount
+					FROM fin_general_journal
+						INNER JOIN fin_general_journal_detail ON fin_general_journal.code = fin_general_journal_detail.headerCode
+					WHERE
+						DATE(fin_general_journal.TransactionDate) <= DATE($P{prmDate})
+						-- AND fin_general_journal_detail.headerCode NOT IN (SELECT fin_supplier_invoice.PaymentVoucherNo FROM fin_supplier_invoice WHERE fin_supplier_invoice.PaymentVoucherNo <> '')
+					GROUP BY fin_general_journal_detail.DocumentNo
+					) AS qry2
+					GROUP BY qry2.DocumentNo
+				) AS qry1 ON qry1.DocumentNo = pur_supplier_credit_note.code
+	WHERE
+	DATE(pur_supplier_credit_note.TransactionDate) <= DATE($P{prmDate})
+	AND (DATE(pur_supplier_credit_note.SettlementDate) > DATE($P{prmDate}) OR pur_supplier_credit_note.SettlementDate = '1900-01-01 00:00:00')
+
+	UNION ALL
+	SELECT
+		'SDN' AS DocumentType,
+		pur_supplier_debit_note.code AS VoucherNo,
+		pur_supplier_debit_note.RefNo AS RefNo,
+		pur_supplier_debit_note.TransactionDate AS TransactionDate,
+		pur_supplier_debit_note.TransactionDate AS DueDate,
+		pur_supplier_debit_note.CurrencyCode,
+		mst_currency.Name AS CurrencyName,
+		pur_supplier_debit_note.ExchangeRate,
+		pur_supplier_debit_note.SupplierCode,
+		mst_supplier.Name AS SupplierName,
+		'' AS PaymentTermCode,
+		'' AS PaymentTermName,
+		0 AS PaymentTermDays,
+		-((pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0)) AS Amount,
+		-(((pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0)) * pur_supplier_debit_note.ExchangeRate) AS AmountIDR,
+		DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) AS Days,
+		-(IF(DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) <= $P{prmAging1}, (pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging1,
+		-(IF(DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) BETWEEN $P{prmAging1} +1 AND $P{prmAging2},  (pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging2,
+		-(IF(DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) BETWEEN $P{prmAging2} +1 AND $P{prmAging3},  (pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging3,
+		-(IF(DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) BETWEEN $P{prmAging3} +1 AND $P{prmAging4},  (pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging4,
+		-(IF(DATEDIFF($P{prmDate}, pur_supplier_debit_note.TransactionDate) > $P{prmAging4},  (pur_supplier_debit_note.GrandTotalAmount) - IFNULL(qry1.Amount, 0), 0)) AS AmountAging5
+	FROM pur_supplier_debit_note
+		INNER JOIN mst_currency ON pur_supplier_debit_note.CurrencyCode = mst_currency.Code
+		INNER JOIN mst_supplier ON pur_supplier_debit_note.SupplierCode = mst_supplier.Code
+		LEFT  JOIN(
+				SELECT
+					qry2.VoucherNo,
+					qry2.TransactionDate,
+					qry2.DocumentNo,
+					SUM(qry2.Amount) AS Amount
+				FROM (
+					SELECT
+						IFNULL(fin_cash_received.code, '') AS VoucherNo,
+						IFNULL(fin_cash_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_cash_received_detail.TransactionStatus='Transaction', fin_cash_received_detail.Credit, 0)) AS Amount
+					FROM fin_cash_received
+						INNER JOIN fin_cash_received_detail ON fin_cash_received.code = fin_cash_received_detail.headerCode
+					WHERE
+						DATE(fin_cash_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_received.code, '') AS VoucherNo,
+						IFNULL(fin_bank_received.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_received_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_bank_received_detail.TransactionStatus='Transaction', fin_bank_received_detail.Credit, 0)) AS Amount
+					FROM fin_bank_received
+						INNER JOIN fin_bank_received_detail ON fin_bank_received.code = fin_bank_received_detail.headerCode
+					WHERE
+						DATE(fin_bank_received.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_received_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_cash_payment.code, '') AS VoucherNo,
+						IFNULL(fin_cash_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_cash_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_cash_payment_detail.TransactionStatus='Transaction', fin_cash_payment_detail.Debit, 0)) AS Amount
+					FROM fin_cash_payment
+						INNER JOIN fin_cash_payment_detail ON fin_cash_payment.code = fin_cash_payment_detail.headerCode
+					WHERE
+						DATE(fin_cash_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_cash_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_bank_payment.code, '') AS VoucherNo,
+						IFNULL(fin_bank_payment.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_bank_payment_detail.DocumentNo, '') AS DocumentNo,
+						SUM(IF(fin_bank_payment_detail.TransactionStatus='Transaction', fin_bank_payment_detail.Debit, 0)) AS Amount
+					FROM fin_bank_payment
+						INNER JOIN fin_bank_payment_detail ON fin_bank_payment.code = fin_bank_payment_detail.headerCode
+					WHERE
+						DATE(fin_bank_payment.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_bank_payment_detail.DocumentNo
+				UNION ALL
+					SELECT
+						IFNULL(fin_general_journal.code, '') AS VoucherNo,
+						IFNULL(fin_general_journal.TransactionDate, CAST('1900-01-01 00:00:00' AS DATETIME)) AS TransactionDate,
+						IFNULL(fin_general_journal_detail.DocumentNo, '') AS DocumentNo,
+						-SUM(IF(fin_general_journal_detail.TransactionStatus='Transaction', fin_general_journal_detail.Credit, 0)) AS Amount
+					FROM fin_general_journal
+						INNER JOIN fin_general_journal_detail ON fin_general_journal.code = fin_general_journal_detail.headerCode
+					WHERE
+						DATE(fin_general_journal.TransactionDate) <= DATE($P{prmDate})
+					GROUP BY fin_general_journal_detail.DocumentNo
+					) AS qry2
+					GROUP BY qry2.DocumentNo
+				) AS qry1 ON qry1.DocumentNo = pur_supplier_debit_note.code
+	WHERE
+		DATE(pur_supplier_debit_note.TransactionDate) <= DATE($P{prmDate})
+		AND (DATE(pur_supplier_debit_note.SettlementDate) >= DATE($P{prmDate}) OR pur_supplier_debit_note.SettlementDate = '1900-01-01 00:00:00')
+	) AS qryAPAging
+	WHERE qryAPAging.Amount <> 0
+	ORDER BY qryAPAging.CurrencyCode, qryAPAging.SupplierCode, qryAPAging.TransactionDate;]]>
+	</queryString>
+	<field name="DocumentType" class="java.lang.String"/>
+	<field name="TransactionDate" class="java.util.Date"/>
+	<field name="DueDate" class="java.util.Date"/>
+	<field name="VoucherNo" class="java.lang.String"/>
+	<field name="RefNo" class="java.lang.String"/>
+	<field name="CurrencyCode" class="java.lang.String"/>
+	<field name="CurrencyName" class="java.lang.String"/>
+	<field name="ExchangeRate" class="java.math.BigDecimal"/>
+	<field name="concatSupp" class="java.lang.String"/>
+	<field name="SupplierCode" class="java.lang.String"/>
+	<field name="SupplierName" class="java.lang.String"/>
+	<field name="PaymentTermCode" class="java.lang.String"/>
+	<field name="paymentTermName" class="java.lang.String"/>
+	<field name="PaymentTermDays" class="java.lang.String"/>
+	<field name="Amount" class="java.math.BigDecimal"/>
+	<field name="AmountIDR" class="java.math.BigDecimal"/>
+	<field name="Days" class="java.math.BigDecimal"/>
+	<field name="AmountAging1" class="java.math.BigDecimal"/>
+	<field name="AmountAging2" class="java.math.BigDecimal"/>
+	<field name="AmountAging3" class="java.math.BigDecimal"/>
+	<field name="AmountAging4" class="java.math.BigDecimal"/>
+	<field name="AmountAging5" class="java.math.BigDecimal"/>
+	<variable name="GRAND_TOTAL_PER_CUR" class="java.math.BigDecimal" resetType="Group" resetGroup="currency" calculation="Sum">
+		<variableExpression><![CDATA[$F{Amount}]]></variableExpression>
+	</variable>
+	<variable name="aging1" class="java.lang.Integer" resetType="Page">
+		<variableExpression><![CDATA[]]></variableExpression>
+		<initialValueExpression><![CDATA[$P{prmAging1}.intValue()+ new Integer("1")]]></initialValueExpression>
+	</variable>
+	<variable name="aging2" class="java.lang.Integer" resetType="Page">
+		<initialValueExpression><![CDATA[$P{prmAging2}.intValue() + new Integer("1")]]></initialValueExpression>
+	</variable>
+	<variable name="aging3" class="java.lang.Integer" resetType="Page">
+		<initialValueExpression><![CDATA[$P{prmAging3}.intValue() + new Integer("1")]]></initialValueExpression>
+	</variable>
+	<group name="currency" isStartNewPage="true" isReprintHeaderOnEachPage="true" footerPosition="StackAtBottom">
+		<groupExpression><![CDATA[$F{CurrencyCode}]]></groupExpression>
+		<groupHeader>
+			<band height="61">
+				<staticText>
+					<reportElement x="238" y="35" width="73" height="26"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Transaction Date
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="35" width="114" height="26"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Document No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="380" y="35" width="54" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Rate]]></text>
+				</staticText>
+				<line>
+					<reportElement x="1" y="60" width="905" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="2" y="34" width="905" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="149" y="34" width="88" height="25"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Supplier Name]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="304" y="35" width="76" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Amount]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="510" y="36" width="30" height="24"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[<= ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="609" y="35" width="13" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[ - ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="797" y="35" width="31" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="869" y="34" width="36" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="550" y="35" width="32" height="25"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Days]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="534" y="35" width="18" height="25"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmAging1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0">
+					<reportElement x="593" y="35" width="18" height="25"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{aging1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="630" y="36" width="31" height="25"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Days]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="617" y="36" width="15" height="23"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmAging2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="715" y="35" width="31" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Days]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="701" y="36" width="16" height="22"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmAging3}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="695" y="35" width="13" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[ - ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="676" y="36" width="20" height="23"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{aging2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="774" y="35" width="13" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[ - ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="754" y="36" width="21" height="22"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{aging3}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="782" y="36" width="15" height="22"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmAging4}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="838" y="34" width="18" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[>]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="857" y="35" width="15" height="24"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmAging4}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="67" y="6" width="114" height="16"/>
+					<textElement>
+						<font fontName="Tahoma" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CurrencyCode}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="3" y="4" width="191" height="20"/>
+					<box>
+						<pen lineWidth="1.25"/>
+						<topPen lineWidth="1.25"/>
+						<leftPen lineWidth="1.25"/>
+						<bottomPen lineWidth="1.25"/>
+						<rightPen lineWidth="1.25"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="8" y="6" width="59" height="16"/>
+					<textElement textAlignment="Left" markup="none">
+						<font fontName="Tahoma" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Currency : ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="434" y="35" width="76" height="26"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<text><![CDATA[Amount IDR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="37" width="35" height="21"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font fontName="Tahoma" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Type]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="42">
+				<staticText>
+					<reportElement x="255" y="3" width="89" height="18"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<text><![CDATA[Grand Total :]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="343" y="3" width="50" height="18" isPrintWhenDetailOverflows="true"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Tahoma" size="11" isBold="true"/>
+						<paragraph leftIndent="3" rightIndent="3"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CurrencyCode}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="392" y="3" width="95" height="18" printWhenGroupChanges="currency"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Tahoma" isBold="true"/>
+						<paragraph leftIndent="2" rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{GRAND_TOTAL_PER_CUR}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="905" height="1"/>
+					<graphicElement>
+						<pen lineWidth="1.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="30" width="216" height="25"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma" size="14" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[A/P Aging]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="857" y="20" width="19" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Of ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="797" y="20" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="839" y="20" width="18" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="876" y="20" width="20" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="1" width="423" height="29"/>
+				<textElement>
+					<font fontName="Tahoma" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{prmBranchName}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="3" y="55" width="191" height="20"/>
+				<box>
+					<pen lineWidth="1.25"/>
+					<topPen lineWidth="1.25"/>
+					<leftPen lineWidth="1.25"/>
+					<bottomPen lineWidth="1.25"/>
+					<rightPen lineWidth="1.25"/>
+				</box>
+				<staticText>
+					<reportElement x="6" y="2" width="42" height="15"/>
+					<textElement textAlignment="Left" markup="none">
+						<font fontName="Tahoma" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ Up To ]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="48" y="2" width="143" height="15"/>
+					<textElement>
+						<font fontName="Tahoma"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{prmDateView}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="840" y="5" width="66" height="15"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="797" y="5" width="41" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Tahoma"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="27" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement x="238" y="2" width="73" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TransactionDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="2" width="114" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VoucherNo}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0">
+				<reportElement x="380" y="2" width="54" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ExchangeRate}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="24" width="905" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.5" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="150" y="1" width="88" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SupplierName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="304" y="2" width="76" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Amount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="510" y="3" width="73" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountAging1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="584" y="3" width="78" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountAging2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="748" y="2" width="80" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountAging4}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="664" y="2" width="82" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountAging3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="830" y="2" width="75" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountAging5}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00">
+				<reportElement x="434" y="2" width="76" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AmountIDR}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="114" y="2" width="35" height="18" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font fontName="Tahoma" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DocumentType}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band/>
+	</summary>
+	<noData>
+		<band height="61">
+			<staticText>
+				<reportElement mode="Opaque" x="194" y="0" width="507" height="50" forecolor="#000000" backcolor="#F5FFFA"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Verdana" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Data]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>
